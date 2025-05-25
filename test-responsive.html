@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Test - Pod Gorilla</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #0a0a0a;
+            color: white;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .breakpoint-info {
+            background: #171717;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .current-size {
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+        }
+        .breakpoint-list {
+            margin-top: 20px;
+        }
+        .breakpoint-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: #2a2a2a;
+            border-radius: 4px;
+        }
+        .active {
+            background: #4CAF50;
+        }
+        .instructions {
+            background: #333;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .back-link {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        .back-link:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Responsive Design Test</h1>
+        
+        <div class="breakpoint-info">
+            <div class="current-size">Current Screen Width: <span id="current-width"></span>px</div>
+            <div class="current-size">Current Breakpoint: <span id="current-breakpoint"></span></div>
+            
+            <div class="breakpoint-list">
+                <div class="breakpoint-item" id="extra-small">Extra Small Mobile (≤ 375px)</div>
+                <div class="breakpoint-item" id="small">Small Mobile (376px - 575px)</div>
+                <div class="breakpoint-item" id="mobile">Mobile Large (576px - 767px)</div>
+                <div class="breakpoint-item" id="tablet">Tablet (768px - 991px)</div>
+                <div class="breakpoint-item" id="desktop">Desktop (992px - 1199px)</div>
+                <div class="breakpoint-item" id="large-desktop">Large Desktop (1200px - 1400px)</div>
+                <div class="breakpoint-item" id="extra-large">Extra Large (> 1400px)</div>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h3>Testing Instructions:</h3>
+            <ol>
+                <li>Resize your browser window to test different breakpoints</li>
+                <li>Use browser developer tools to simulate mobile devices</li>
+                <li>Test both portrait and landscape orientations on mobile</li>
+                <li>Check that fonts scale appropriately at each breakpoint</li>
+                <li>Verify that layout changes work as expected</li>
+            </ol>
+        </div>
+        
+        <a href="index.html" class="back-link">← Back to Main Site</a>
+    </div>
+
+    <script>
+        function updateBreakpointInfo() {
+            const width = window.innerWidth;
+            const widthSpan = document.getElementById('current-width');
+            const breakpointSpan = document.getElementById('current-breakpoint');
+            
+            // Clear all active classes
+            document.querySelectorAll('.breakpoint-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            widthSpan.textContent = width;
+            
+            if (width <= 375) {
+                breakpointSpan.textContent = 'Extra Small Mobile';
+                document.getElementById('extra-small').classList.add('active');
+            } else if (width <= 575) {
+                breakpointSpan.textContent = 'Small Mobile';
+                document.getElementById('small').classList.add('active');
+            } else if (width <= 767) {
+                breakpointSpan.textContent = 'Mobile Large';
+                document.getElementById('mobile').classList.add('active');
+            } else if (width <= 991) {
+                breakpointSpan.textContent = 'Tablet';
+                document.getElementById('tablet').classList.add('active');
+            } else if (width <= 1199) {
+                breakpointSpan.textContent = 'Desktop';
+                document.getElementById('desktop').classList.add('active');
+            } else if (width <= 1400) {
+                breakpointSpan.textContent = 'Large Desktop';
+                document.getElementById('large-desktop').classList.add('active');
+            } else {
+                breakpointSpan.textContent = 'Extra Large';
+                document.getElementById('extra-large').classList.add('active');
+            }
+        }
+        
+        // Update on load
+        updateBreakpointInfo();
+        
+        // Update on resize
+        window.addEventListener('resize', updateBreakpointInfo);
+        
+        // Update on orientation change
+        window.addEventListener('orientationchange', function() {
+            setTimeout(updateBreakpointInfo, 100);
+        });
+    </script>
+</body>
+</html> 
