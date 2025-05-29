@@ -21,6 +21,9 @@
   </head>
 
   <body>
+    <!-- Scroll Progress Indicator -->
+    <div class="scroll-indicator"></div>
+
     <!-- Alert Container for API responses -->
     <div id="alertContainer" class="alert-container"></div>
 
@@ -51,7 +54,11 @@
         <div class="logo-container">
           <div class="logo">
             <div class="logo-icon">
-              <img src="img/Logo/Pod Gorilla Logo-02.png" alt="PodGorilla Logo" class="logo-image" />
+              <img
+                src="img/Logo/Pod Gorilla Logo-02.png"
+                alt="PodGorilla Logo"
+                class="logo-image"
+              />
             </div>
             <span class="logo-text">PodGorilla</span>
           </div>
@@ -62,9 +69,17 @@
             <span class="heading-word">CREATE</span>
             <span class="heading-word">PODCASTS</span>
             <span class="heading-word">WITHOUT</span>
-            <span class="heading-word highlight gradient-text" data-text="WRITING">WRITING</span>
+            <span
+              class="heading-word highlight gradient-text"
+              data-text="WRITING"
+              >WRITING</span
+            >
             <span class="heading-word">OR</span>
-            <span class="heading-word highlight gradient-text" data-text="RECORDING">RECORDING</span>
+            <span
+              class="heading-word highlight gradient-text"
+              data-text="RECORDING"
+              >RECORDING</span
+            >
           </h1>
 
           <div class="subtitle-container">
@@ -91,13 +106,19 @@
               </div>
               <div class="player-info">
                 <span class="live-indicator">🔴 LIVE DEMO</span>
-                <span class="episode-title">AI-Generated Episode #247</span>
+                <span class="episode-title">Click To Watch</span>
               </div>
-              <!-- <div class="play-button">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M8 5V19L19 12L8 5Z" fill="currentColor"/>
+              <div class="play-button">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M8 5V19L19 12L8 5Z" fill="currentColor" />
                 </svg>
-              </div> -->
+              </div>
             </div>
           </div>
 
@@ -255,6 +276,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="js/luxy.js"></script>
     <script src="js/waitlist.js"></script>
+    <script src="js/scroll-indicator.js"></script>
 
     <!-- YouTube Playlist Modal -->
     <div id="playlistModal" class="modal">
@@ -262,35 +284,62 @@
         <div class="modal-header">
           <h2 class="modal-title">🎙️ PodGorilla Demo Playlist</h2>
           <button class="modal-close" id="closeModal">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M18 6L6 18M6 6L18 18"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
             </svg>
           </button>
         </div>
         <div class="modal-body">
           <div class="video-container">
-            <iframe 
+            <iframe
               id="youtubePlayer"
               src=""
               title="PodGorilla Demo Playlist"
               frameborder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowfullscreen>
+              allowfullscreen
+            >
             </iframe>
           </div>
           <div class="playlist-info">
             <p class="playlist-description">
-              🚀 Watch our AI-powered podcast generation in action! This playlist showcases real examples of podcasts created without writing or recording.
+              🚀 Watch our AI-powered podcast generation in action! This
+              playlist showcases real examples of podcasts created without
+              writing or recording.
             </p>
-            <a href="https://www.youtube.com/playlist?list=PLMQYoEoYSyuN4C4G1QjsJBnrPTWsF18Aj" 
-               target="_blank" 
-               class="playlist-link">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M23 7C23 5.89543 22.1046 5 21 5H3C1.89543 5 1 5.89543 1 7V17C1 18.1046 1.89543 19 3 19H21C22.1046 19 23 18.1046 23 17V7Z" stroke="currentColor" stroke-width="2"/>
-                <path d="M10 9L15 12L10 15V9Z" fill="currentColor"/>
+            <!-- <a
+              href="https://www.youtube.com/playlist?list=PLMQYoEoYSyuN4C4G1QjsJBnrPTWsF18Aj"
+              target="_blank"
+              class="playlist-link"
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M23 7C23 5.89543 22.1046 5 21 5H3C1.89543 5 1 5.89543 1 7V17C1 18.1046 1.89543 19 3 19H21C22.1046 19 23 18.1046 23 17V7Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+                <path d="M10 9L15 12L10 15V9Z" fill="currentColor" />
               </svg>
               View Full Playlist on YouTube
-            </a>
+            </a> -->
           </div>
         </div>
       </div>

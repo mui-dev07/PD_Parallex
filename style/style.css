@@ -12,6 +12,223 @@
   visibility: visible !important;
 }
 
+/* ===== CUSTOM MODERN SCROLLBAR ===== */
+/* Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(10, 10, 10, 0.3);
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(75, 20, 112, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--primary-purple) 0%, var(--bright-purple) 50%, var(--accent-orange) 100%);
+  border-radius: 10px;
+  border: 2px solid rgba(10, 10, 10, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(75, 20, 112, 0.3);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, var(--bright-purple) 0%, var(--accent-orange) 50%, var(--primary-purple) 100%);
+  box-shadow: 0 6px 20px rgba(129, 39, 191, 0.4);
+  transform: scale(1.05);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(135deg, var(--accent-orange) 0%, var(--secondary-brown) 50%, var(--primary-purple) 100%);
+  box-shadow: 0 2px 10px rgba(166, 101, 47, 0.5);
+}
+
+::-webkit-scrollbar-corner {
+  background: rgba(10, 10, 10, 0.3);
+  border-radius: 10px;
+}
+
+/* Firefox */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-purple) rgba(10, 10, 10, 0.3);
+}
+
+/* Custom scrollbar for modal content */
+.modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+  background: rgba(75, 20, 112, 0.1);
+  border-radius: 8px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--bright-purple) 0%, var(--accent-orange) 100%);
+  border-radius: 8px;
+  border: 1px solid rgba(10, 10, 10, 0.1);
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, var(--accent-orange) 0%, var(--bright-purple) 100%);
+}
+
+/* Smooth scrolling enhancement */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scroll indicator */
+.scroll-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: rgba(10, 10, 10, 0.2);
+  z-index: 9999;
+  backdrop-filter: blur(10px);
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.scroll-indicator::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-purple) 0%, var(--bright-purple) 50%, var(--accent-orange) 100%);
+  width: var(--scroll-progress, 0%);
+  transition: width 0.1s ease-out;
+  box-shadow: 0 0 10px rgba(129, 39, 191, 0.5);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+
+/* Scrollbar animations for different sections */
+.features::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--secondary-brown) 0%, var(--accent-orange) 100%);
+}
+
+.footer::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--dark-brown) 0%, var(--primary-purple) 100%);
+}
+
+/* Scroll to top button */
+.scroll-to-top {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, var(--primary-purple) 0%, var(--bright-purple) 50%, var(--accent-orange) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px) scale(0.8);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000;
+  box-shadow: 0 8px 25px rgba(75, 20, 112, 0.3);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.scroll-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+.scroll-to-top:hover {
+  background: linear-gradient(135deg, var(--bright-purple) 0%, var(--accent-orange) 50%, var(--primary-purple) 100%);
+  box-shadow: 0 12px 35px rgba(129, 39, 191, 0.4);
+  transform: translateY(-3px) scale(1.05);
+}
+
+.scroll-to-top:active {
+  transform: translateY(0) scale(0.95);
+  box-shadow: 0 4px 15px rgba(75, 20, 112, 0.5);
+}
+
+.scroll-to-top svg {
+  width: 24px;
+  height: 24px;
+  color: white;
+  transition: transform 0.3s ease;
+}
+
+.scroll-to-top:hover svg {
+  transform: translateY(-2px);
+}
+
+/* Enhanced scroll indicator with pulse effect */
+.scroll-indicator::before {
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+
+@keyframes scrollPulse {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(129, 39, 191, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(129, 39, 191, 0.8), 0 0 30px rgba(166, 101, 47, 0.4);
+  }
+}
+
+/* Mobile responsive scrollbar */
+@media (max-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .scroll-to-top {
+    width: 45px;
+    height: 45px;
+    bottom: 20px;
+    right: 20px;
+  }
+  
+  .scroll-to-top svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .scroll-indicator {
+    height: 3px;
+  }
+}
+
+@media (max-width: 480px) {
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .scroll-to-top {
+    width: 40px;
+    height: 40px;
+    bottom: 15px;
+    right: 15px;
+  }
+  
+  .scroll-to-top svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .scroll-indicator {
+    height: 2px;
+  }
+}
+
 /* ===== MODERN WAITLIST PAGE STYLES WITH NEW COLOR THEME ===== */
 
 :root {
@@ -1370,11 +1587,6 @@ body {
   display: inline-block;
   will-change: transform;
   animation: fadeInUp 0.6s ease-out forwards;
-}
-
-/* ===== SMOOTH SCROLLING ===== */
-html {
-  scroll-behavior: smooth;
 }
 
 /* ===== SELECTION STYLES ===== */
