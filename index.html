@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>PodGorilla - Create Podcasts Without Writing OR Recording</title>
-    <link rel="icon" href="img/icon.jpg" type="icon/x-icon" />
+    <link
+      rel="icon"
+      href="img/Logo/Pod Gorilla Logo-01.png"
+      type="icon/x-icon"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -17,6 +21,9 @@
   </head>
 
   <body>
+    <!-- Alert Container for API responses -->
+    <div id="alertContainer" class="alert-container"></div>
+
     <!-- Animated Background -->
     <div class="bg-animation">
       <div class="floating-shapes">
@@ -44,15 +51,7 @@
         <div class="logo-container">
           <div class="logo">
             <div class="logo-icon">
-              <div class="microphone">
-                <div class="mic-body"></div>
-                <div class="mic-stand"></div>
-                <div class="sound-waves">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
-              </div>
+              <img src="img/Logo/Pod Gorilla Logo-02.png" alt="PodGorilla Logo" class="logo-image" />
             </div>
             <span class="logo-text">PodGorilla</span>
           </div>
@@ -63,9 +62,9 @@
             <span class="heading-word">CREATE</span>
             <span class="heading-word">PODCASTS</span>
             <span class="heading-word">WITHOUT</span>
-            <span class="heading-word highlight">WRITING</span>
+            <span class="heading-word highlight gradient-text" data-text="WRITING">WRITING</span>
             <span class="heading-word">OR</span>
-            <span class="heading-word highlight">RECORDING</span>
+            <span class="heading-word highlight gradient-text" data-text="RECORDING">RECORDING</span>
           </h1>
 
           <div class="subtitle-container">
@@ -101,6 +100,13 @@
           <div class="waitlist-form-container">
             <form class="waitlist-form" id="waitlistForm">
               <div class="form-group">
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  placeholder="Enter your full name"
+                  required
+                />
                 <input
                   type="email"
                   id="email"

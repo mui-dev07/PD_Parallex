@@ -5,175 +5,324 @@ document.addEventListener("DOMContentLoaded", function () {
   const isMobile = window.innerWidth <= 768;
   const isTablet = window.innerWidth <= 1024 && window.innerWidth > 768;
 
-  // Initialize text splitting for animations
-  Splitting();
+  // Initialize text splitting for animations (with error handling)
+  try {
+    if (typeof Splitting !== 'undefined') {
+      Splitting();
+    }
+  } catch (error) {
+    console.warn('Splitting.js not loaded:', error);
+  }
 
-  // Initialize smooth scrolling library
-  luxy.init({
-    wrapper: '#luxy',
-    targets: '.luxy-el',
-    wrapperSpeed: 0.08
-  });
+  // Initialize smooth scrolling library (with error handling)
+  try {
+    if (typeof luxy !== 'undefined') {
+      luxy.init({
+        wrapper: '#luxy',
+        targets: '.luxy-el',
+        wrapperSpeed: 0.08
+      });
+    }
+  } catch (error) {
+    console.warn('Luxy.js not loaded:', error);
+  }
 
-  // Register GSAP plugins
-  gsap.registerPlugin(ScrollTrigger);
+  // Register GSAP plugins (with error handling)
+  try {
+    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+      gsap.registerPlugin(ScrollTrigger);
+    }
+  } catch (error) {
+    console.warn('GSAP not loaded:', error);
+  }
 
   // ===== INITIAL ANIMATIONS =====
   function initAnimations() {
-    const tl = gsap.timeline();
-
-    // Animate logo
-    tl.from(".logo-container", {
-      duration: 1,
-      opacity: 0,
-      y: -50,
-      ease: "power2.out",
+    // Ensure ALL content is visible first - this is crucial
+    const elementsToShow = [
+      '.hero-content',
+      '.logo-container', 
+      '.main-heading',
+      '.heading-word',
+      '.subtitle',
+      '.subtitle .char',
+      '.podcast-preview',
+      '.waitlist-form-container',
+      '.stat-item',
+      '.header__marq'
+    ];
+    
+    elementsToShow.forEach(selector => {
+      const elements = document.querySelectorAll(selector);
+      elements.forEach(el => {
+        if (el) {
+          el.style.opacity = '1';
+          el.style.visibility = 'visible';
+          el.style.transform = 'none';
+        }
+      });
     });
 
-    // Animate logo elements
-    tl.from(".mic-body", {
-      duration: 0.8,
-      scale: 0,
-      ease: "back.out(1.7)",
-    }, "-=0.5");
+    // Only run animations if GSAP is available and elements exist
+    if (typeof gsap === 'undefined') {
+      console.warn('GSAP not available, content is visible without animations');
+      return;
+    }
 
-    tl.from(".sound-waves span", {
-      duration: 0.6,
-      scale: 0,
-      stagger: 0.1,
-      ease: "power2.out",
-    }, "-=0.3");
+    // Wait a bit to ensure DOM is fully ready
+    setTimeout(() => {
+      try {
+        // Check if elements exist before animating
+        const logoContainer = document.querySelector('.logo-container');
+        const headingWords = document.querySelectorAll('.heading-word');
+        const heroContent = document.querySelector('.hero-content');
+        
+        if (!logoContainer || !headingWords.length || !heroContent) {
+          console.warn('Required elements not found, skipping animations');
+          return;
+        }
 
-    // Animate main heading words
-    tl.from(".heading-word", {
-      duration: 1.2,
-      opacity: 0,
-      y: 100,
-      rotationX: 90,
-      stagger: 0.15,
-      ease: "back.out(1.7)",
-      transformOrigin: "center bottom",
-    }, "-=0.3");
+        const tl = gsap.timeline({
+          onComplete: () => {
+            // Ensure everything is visible after animations complete
+            elementsToShow.forEach(selector => {
+              const elements = document.querySelectorAll(selector);
+              elements.forEach(el => {
+                if (el) {
+                  el.style.opacity = '1';
+                  el.style.visibility = 'visible';
+                }
+              });
+            });
+          }
+        });
 
-    // Animate subtitle
-    tl.from(".subtitle .char", {
-      duration: 0.8,
-      opacity: 0,
-      yPercent: 50,
-      stagger: 0.01,
-      ease: "power2.out",
-    }, "-=0.6");
+        // Set initial states manually (safer than relying on from() animations)
+        gsap.set(".logo-container", { opacity: 0, y: -50 });
+        gsap.set(".logo-image", { scale: 0, rotation: -180 });
+        gsap.set(".logo-text", { opacity: 0, x: -30 });
+        gsap.set(".heading-word", { opacity: 0, y: 100, rotationX: 90 });
+        
+        // Only animate subtitle chars if they exist
+        const subtitleChars = document.querySelectorAll('.subtitle .char');
+        if (subtitleChars.length > 0) {
+          gsap.set(".subtitle .char", { opacity: 0, yPercent: 50 });
+        }
+        
+        gsap.set(".podcast-preview", { opacity: 0, scale: 0.8 });
+        gsap.set(".waitlist-form-container", { opacity: 0, y: 50 });
+        gsap.set(".stat-item", { opacity: 0, y: 30, scale: 0.8 });
+        gsap.set(".header__marq", { opacity: 0, yPercent: 100 });
 
-    // Animate podcast preview
-    tl.from(".podcast-preview", {
-      duration: 1,
-      opacity: 0,
-      scale: 0.8,
-      ease: "power2.out",
-    }, "-=0.4");
+        // Animate to final states
+        tl.to(".logo-container", {
+          duration: 1,
+          opacity: 1,
+          y: 0,
+          ease: "power2.out",
+        });
 
-    // Animate form container
-    tl.from(".waitlist-form-container", {
-      duration: 1,
-      opacity: 0,
-      y: 50,
-      ease: "power2.out",
-    }, "-=0.6");
+        tl.to(".logo-image", {
+          duration: 0.8,
+          scale: 1,
+          rotation: 0,
+          ease: "back.out(1.7)",
+        }, "-=0.5");
 
-    // Animate stats
-    tl.from(".stat-item", {
-      duration: 0.8,
-      opacity: 0,
-      y: 30,
-      scale: 0.8,
-      stagger: 0.1,
-      ease: "back.out(1.7)",
-    }, "-=0.6");
+        tl.to(".logo-text", {
+          duration: 0.6,
+          opacity: 1,
+          x: 0,
+          ease: "power2.out",
+        }, "-=0.3");
 
-    // Animate marquee
-    tl.from(".header__marq", {
-      duration: 1,
-      opacity: 0,
-      yPercent: 100,
-      ease: "power2.out",
-    }, "-=0.8");
+        tl.to(".heading-word", {
+          duration: 1.2,
+          opacity: 1,
+          y: 0,
+          rotationX: 0,
+          stagger: 0.15,
+          ease: "back.out(1.7)",
+          transformOrigin: "center bottom",
+        }, "-=0.3");
 
-    // Start counting animation after initial load
-    tl.call(animateCounters, null, "-=0.3");
-    
-    // Start podcast player animation
-    tl.call(startPodcastAnimation, null, "-=0.5");
+        // Only animate subtitle chars if they exist
+        if (subtitleChars.length > 0) {
+          tl.to(".subtitle .char", {
+            duration: 0.8,
+            opacity: 1,
+            yPercent: 0,
+            stagger: 0.01,
+            ease: "power2.out",
+          }, "-=0.6");
+        } else {
+          // Fallback for subtitle without splitting
+          tl.to(".subtitle", {
+            duration: 0.8,
+            opacity: 1,
+            ease: "power2.out",
+          }, "-=0.6");
+        }
+
+        tl.to(".podcast-preview", {
+          duration: 1,
+          opacity: 1,
+          scale: 1,
+          ease: "power2.out",
+        }, "-=0.4");
+
+        tl.to(".waitlist-form-container", {
+          duration: 1,
+          opacity: 1,
+          y: 0,
+          ease: "power2.out",
+        }, "-=0.6");
+
+        tl.to(".stat-item", {
+          duration: 0.8,
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          stagger: 0.1,
+          ease: "back.out(1.7)",
+        }, "-=0.6");
+
+        tl.to(".header__marq", {
+          duration: 1,
+          opacity: 1,
+          yPercent: 0,
+          ease: "power2.out",
+        }, "-=0.8");
+
+        // Start other animations
+        tl.call(animateCounters, null, "-=0.3");
+        tl.call(startPodcastAnimation, null, "-=0.5");
+
+      } catch (error) {
+        console.error('Animation error:', error);
+        // Ensure content is visible even if animations fail
+        elementsToShow.forEach(selector => {
+          const elements = document.querySelectorAll(selector);
+          elements.forEach(el => {
+            if (el) {
+              el.style.opacity = '1';
+              el.style.visibility = 'visible';
+              el.style.transform = 'none';
+            }
+          });
+        });
+      }
+    }, 100); // Small delay to ensure DOM is ready
   }
 
   // ===== PODCAST PLAYER ANIMATION =====
   function startPodcastAnimation() {
-    // Animate equalizer bars
-    gsap.to(".equalizer .bar", {
-      duration: "random(0.5, 2)",
-      height: "random(10, 35)",
-      repeat: -1,
-      yoyo: true,
-      ease: "power2.inOut",
-      stagger: {
-        each: 0.1,
-        repeat: -1,
-        yoyo: true
-      }
-    });
+    if (typeof gsap === 'undefined') {
+      return;
+    }
 
-    // Pulse live indicator
-    gsap.to(".live-indicator", {
-      duration: 1.5,
-      opacity: 0.5,
-      repeat: -1,
-      yoyo: true,
-      ease: "power2.inOut"
-    });
-
-    // Animate episode title
-    const episodeNumbers = [247, 248, 249, 250, 251];
-    let currentIndex = 0;
-    
-    setInterval(() => {
-      currentIndex = (currentIndex + 1) % episodeNumbers.length;
+    try {
+      // Check if elements exist before animating
+      const equalizerBars = document.querySelectorAll('.equalizer .bar');
+      const liveIndicator = document.querySelector('.live-indicator');
       const episodeTitle = document.querySelector('.episode-title');
-      
-      gsap.to(episodeTitle, {
-        duration: 0.3,
-        opacity: 0,
-        y: -10,
-        ease: "power2.in",
-        onComplete: () => {
-          episodeTitle.textContent = `AI-Generated Episode #${episodeNumbers[currentIndex]}`;
-          gsap.to(episodeTitle, {
-            duration: 0.3,
-            opacity: 1,
-            y: 0,
-            ease: "power2.out"
-          });
-        }
-      });
-    }, 3000);
+
+      // Animate equalizer bars only if they exist
+      if (equalizerBars.length > 0) {
+        gsap.to(".equalizer .bar", {
+          duration: "random(0.5, 2)",
+          height: "random(10, 35)",
+          repeat: -1,
+          yoyo: true,
+          ease: "power2.inOut",
+          stagger: {
+            each: 0.1,
+            repeat: -1,
+            yoyo: true
+          }
+        });
+      }
+
+      // Pulse live indicator only if it exists
+      if (liveIndicator) {
+        gsap.to(".live-indicator", {
+          duration: 1.5,
+          opacity: 0.5,
+          repeat: -1,
+          yoyo: true,
+          ease: "power2.inOut"
+        });
+      }
+
+      // Animate episode title only if it exists
+      if (episodeTitle) {
+        const episodeNumbers = [247, 248, 249, 250, 251];
+        let currentIndex = 0;
+        
+        setInterval(() => {
+          currentIndex = (currentIndex + 1) % episodeNumbers.length;
+          const currentEpisodeTitle = document.querySelector('.episode-title');
+          
+          if (currentEpisodeTitle) {
+            gsap.to(currentEpisodeTitle, {
+              duration: 0.3,
+              opacity: 0,
+              y: -10,
+              ease: "power2.in",
+              onComplete: () => {
+                currentEpisodeTitle.textContent = `AI-Generated Episode #${episodeNumbers[currentIndex]}`;
+                gsap.to(currentEpisodeTitle, {
+                  duration: 0.3,
+                  opacity: 1,
+                  y: 0,
+                  ease: "power2.out"
+                });
+              }
+            });
+          }
+        }, 3000);
+      }
+    } catch (error) {
+      console.error('Podcast animation error:', error);
+    }
   }
 
   // ===== COUNTER ANIMATION =====
   function animateCounters() {
-    const counters = document.querySelectorAll('.stat-number');
-    
-    counters.forEach(counter => {
-      const target = parseInt(counter.getAttribute('data-count'));
-      const duration = 2;
+    if (typeof gsap === 'undefined') {
+      return;
+    }
+
+    try {
+      const counters = document.querySelectorAll('.stat-number');
       
-      gsap.to(counter, {
-        duration: duration,
-        innerHTML: target,
-        ease: "power2.out",
-        snap: { innerHTML: 1 },
-        onUpdate: function() {
-          counter.innerHTML = Math.ceil(counter.innerHTML);
+      if (counters.length === 0) {
+        console.warn('No stat counters found');
+        return;
+      }
+      
+      counters.forEach(counter => {
+        const target = parseInt(counter.getAttribute('data-count'));
+        if (isNaN(target)) {
+          console.warn('Invalid data-count attribute:', counter);
+          return;
         }
+        
+        const duration = 2;
+        
+        gsap.to(counter, {
+          duration: duration,
+          innerHTML: target,
+          ease: "power2.out",
+          snap: { innerHTML: 1 },
+          onUpdate: function() {
+            counter.innerHTML = Math.ceil(counter.innerHTML);
+          }
+        });
       });
-    });
+    } catch (error) {
+      console.error('Counter animation error:', error);
+    }
   }
 
   // ===== PARALLAX ANIMATIONS =====
@@ -297,40 +446,75 @@ document.addEventListener("DOMContentLoaded", function () {
   // ===== FORM HANDLING =====
   function setupForm() {
     const form = document.getElementById('waitlistForm');
+    const nameInput = document.getElementById('name');
     const emailInput = document.getElementById('email');
-    const submitBtn = document.querySelector('.submit-btn');
-    const btnText = document.querySelector('.btn-text');
+    const submitBtn = form.querySelector('.submit-btn');
 
-    // Form submission
-    form.addEventListener('submit', function(e) {
+    // Mailvio API configuration
+    const MAILVIO_CONFIG = {
+      accountId: '29003',
+      formId: '43895',
+      apiUrl: 'https://apiv2.mailvio.com/form'
+    };
+
+    form.addEventListener('submit', async function(e) {
       e.preventDefault();
       
+      const name = nameInput.value.trim();
       const email = emailInput.value.trim();
       
-      if (!isValidEmail(email)) {
-        showMessage('Please enter a valid email address', 'error');
+      // Validation
+      if (!name) {
+        showAlert('Please enter your name', 'error');
+        shakeElement(nameInput);
+        return;
+      }
+      
+      if (!email || !isValidEmail(email)) {
+        showAlert('Please enter a valid email address', 'error');
         shakeElement(emailInput);
         return;
       }
 
-      // Animate button loading state
+      // Show loading state
       animateButtonLoading(true);
       
-      // Simulate API call (replace with actual endpoint)
-      setTimeout(() => {
-        // Success animation
-        animateButtonSuccess();
-        showMessage('🎉 Welcome to the waitlist! Check your email for confirmation.', 'success');
+      try {
+        // Submit to Mailvio API
+        const response = await fetch(`${MAILVIO_CONFIG.apiUrl}?am=${MAILVIO_CONFIG.accountId}&fid=${MAILVIO_CONFIG.formId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            emailAddress: email,
+            name: name
+          })
+        });
+
+        if (response.ok) {
+          // Success
+          animateButtonSuccess();
+          showAlert(`🎉 Welcome to the waitlist, ${name}! Check your email for confirmation.`, 'success');
+          
+          // Reset form after delay
+          setTimeout(() => {
+            form.reset();
+            animateButtonLoading(false);
+          }, 2000);
+          
+          // Create confetti effect
+          createConfetti();
+          
+        } else {
+          throw new Error('Subscription failed');
+        }
         
-        // Confetti effect
-        createConfetti();
-        
-        // Reset form after delay
-        setTimeout(() => {
-          form.reset();
-          animateButtonLoading(false);
-        }, 3000);
-      }, 2000);
+      } catch (error) {
+        console.error('Subscription error:', error);
+        showAlert('Oops! Something went wrong. Please try again.', 'error');
+        animateButtonLoading(false);
+      }
     });
 
     // Email validation
@@ -339,87 +523,58 @@ document.addEventListener("DOMContentLoaded", function () {
       return emailRegex.test(email);
     }
 
-    // Shake animation for errors
+    // Shake animation for invalid inputs
     function shakeElement(element) {
-      gsap.to(element, {
-        duration: 0.1,
-        x: -10,
-        repeat: 5,
-        yoyo: true,
-        ease: "power2.inOut",
-        onComplete: () => {
-          gsap.set(element, { x: 0 });
-        }
-      });
+      element.style.animation = 'shake 0.5s ease-in-out';
+      setTimeout(() => {
+        element.style.animation = '';
+      }, 500);
     }
 
     // Button loading animation
     function animateButtonLoading(loading) {
+      const btnText = submitBtn.querySelector('.btn-text');
+      const btnBg = submitBtn.querySelector('.btn-bg');
+      
       if (loading) {
-        gsap.to(submitBtn, {
-          duration: 0.3,
-          scale: 0.95,
-          ease: "power2.out"
-        });
         btnText.textContent = 'Joining...';
-        
-        // Add loading spinner
-        const spinner = document.createElement('div');
-        spinner.className = 'loading-spinner';
-        spinner.style.cssText = `
-          width: 20px;
-          height: 20px;
-          border: 2px solid rgba(255,255,255,0.3);
-          border-top: 2px solid white;
-          border-radius: 50%;
-          animation: spin 1s linear infinite;
-          margin-left: 10px;
-          display: inline-block;
-        `;
-        btnText.appendChild(spinner);
-        
-        // Add spinner animation
-        const style = document.createElement('style');
-        style.textContent = `
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `;
-        document.head.appendChild(style);
-        
+        submitBtn.disabled = true;
+        gsap.to(btnBg, {
+          duration: 1,
+          scaleX: 1,
+          ease: "power2.inOut"
+        });
       } else {
-        gsap.to(submitBtn, {
+        btnText.textContent = 'Join Waitlist';
+        submitBtn.disabled = false;
+        gsap.to(btnBg, {
           duration: 0.3,
-          scale: 1,
+          scaleX: 0,
           ease: "power2.out"
         });
-        btnText.innerHTML = 'Join Waitlist';
       }
     }
 
-    // Button success animation
+    // Success animation
     function animateButtonSuccess() {
-      gsap.timeline()
-        .to(submitBtn, {
-          duration: 0.2,
-          scale: 1.05,
-          ease: "power2.out"
-        })
-        .to(submitBtn, {
-          duration: 0.3,
-          scale: 1,
-          ease: "power2.out"
-        });
+      const btnText = submitBtn.querySelector('.btn-text');
+      btnText.textContent = '✓ Joined!';
       
-      btnText.innerHTML = '✓ Joined!';
+      gsap.to(submitBtn, {
+        duration: 0.3,
+        scale: 1.05,
+        ease: "back.out(1.7)",
+        yoyo: true,
+        repeat: 1
+      });
     }
 
     // Confetti effect
     function createConfetti() {
-      const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#6366f1', '#f093fb'];
+      const colors = ['#ED454A', '#B453E7', '#6366f1', '#f093fb', '#ff4757'];
+      const confettiCount = 50;
       
-      for (let i = 0; i < 50; i++) {
+      for (let i = 0; i < confettiCount; i++) {
         const confetti = document.createElement('div');
         confetti.style.cssText = `
           position: fixed;
@@ -428,67 +583,79 @@ document.addEventListener("DOMContentLoaded", function () {
           background: ${colors[Math.floor(Math.random() * colors.length)]};
           top: 50%;
           left: 50%;
-          z-index: 1000;
+          z-index: 10000;
           pointer-events: none;
           border-radius: 50%;
         `;
+        
         document.body.appendChild(confetti);
         
         gsap.to(confetti, {
           duration: 2,
           x: (Math.random() - 0.5) * 800,
-          y: Math.random() * 600 + 100,
+          y: (Math.random() - 0.5) * 600,
           rotation: Math.random() * 360,
           opacity: 0,
+          scale: 0,
           ease: "power2.out",
           onComplete: () => confetti.remove()
         });
       }
     }
 
-    // Show message
-    function showMessage(text, type) {
-      // Remove existing messages
-      const existingMessage = document.querySelector('.form-message');
-      if (existingMessage) {
-        existingMessage.remove();
-      }
-
-      // Create new message
-      const message = document.createElement('div');
-      message.className = `form-message ${type}`;
-      message.textContent = text;
-      message.style.cssText = `
-        margin-top: 1rem;
-        padding: 1rem;
-        border-radius: 8px;
-        text-align: center;
-        font-weight: 600;
-        background: ${type === 'success' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)'};
-        color: ${type === 'success' ? '#22c55e' : '#ef4444'};
-        border: 1px solid ${type === 'success' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)'};
+    // Alert system
+    function showAlert(message, type = 'info') {
+      const alertContainer = document.getElementById('alertContainer');
+      
+      const alert = document.createElement('div');
+      alert.className = `alert ${type}`;
+      alert.innerHTML = `
+        <button class="alert-close" aria-label="Close alert">&times;</button>
+        <div class="alert-message">${message}</div>
       `;
-
-      form.appendChild(message);
-
-      // Animate message in
-      gsap.from(message, {
-        duration: 0.5,
-        opacity: 0,
-        y: 20,
-        ease: "power2.out"
-      });
-
-      // Remove message after delay
+      
+      alertContainer.appendChild(alert);
+      
+      // Show animation
       setTimeout(() => {
-        gsap.to(message, {
-          duration: 0.3,
-          opacity: 0,
-          y: -20,
-          ease: "power2.in",
-          onComplete: () => message.remove()
-        });
+        alert.classList.add('show');
+      }, 100);
+      
+      // Auto close after 5 seconds
+      const autoCloseTimer = setTimeout(() => {
+        closeAlert(alert);
       }, 5000);
+      
+      // Manual close
+      const closeBtn = alert.querySelector('.alert-close');
+      closeBtn.addEventListener('click', () => {
+        clearTimeout(autoCloseTimer);
+        closeAlert(alert);
+      });
+      
+      // Close alert function
+      function closeAlert(alertElement) {
+        alertElement.classList.remove('show');
+        setTimeout(() => {
+          if (alertElement.parentNode) {
+            alertElement.remove();
+          }
+        }, 400);
+      }
+    }
+
+    // Add shake animation to CSS if not present
+    if (!document.querySelector('#shakeAnimation')) {
+      const style = document.createElement('style');
+      style.id = 'shakeAnimation';
+      style.textContent = `
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-5px); }
+          75% { transform: translateX(5px); }
+        }
+      `;
+      document.head.appendChild(style);
     }
   }
 
@@ -499,17 +666,16 @@ document.addEventListener("DOMContentLoaded", function () {
     if (logo) {
       logo.addEventListener('mouseenter', () => {
         if (!isMobile) {
-          gsap.to('.mic-body', {
+          gsap.to('.logo-image', {
             duration: 0.3,
             scale: 1.1,
-            boxShadow: '0 0 30px rgba(102, 126, 234, 0.8)',
+            rotation: 5,
             ease: "power2.out"
           });
           
-          gsap.to('.sound-waves span', {
+          gsap.to('.logo-text', {
             duration: 0.3,
-            scaleY: 1.5,
-            stagger: 0.1,
+            color: "#ED454A",
             ease: "power2.out"
           });
         }
@@ -517,17 +683,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
       logo.addEventListener('mouseleave', () => {
         if (!isMobile) {
-          gsap.to('.mic-body', {
+          gsap.to('.logo-image', {
             duration: 0.3,
             scale: 1,
-            boxShadow: '0 0 20px rgba(102, 126, 234, 0.5)',
+            rotation: 0,
             ease: "power2.out"
           });
           
-          gsap.to('.sound-waves span', {
+          gsap.to('.logo-text', {
             duration: 0.3,
-            scaleY: 1,
-            stagger: 0.1,
+            color: "#667eea",
             ease: "power2.out"
           });
         }
@@ -694,17 +859,110 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // ===== INITIALIZE EVERYTHING =====
-  function init() {
-    initAnimations();
-    setupParallax();
-    setupForm();
-    setupInteractiveAnimations();
-    handleResize();
+  // ===== ENSURE GRADIENT TEXT VISIBILITY =====
+  function ensureGradientTextVisibility() {
+    const gradientTexts = document.querySelectorAll('.gradient-text');
+    
+    gradientTexts.forEach(element => {
+      // Ensure the element is visible
+      element.style.opacity = '1';
+      element.style.visibility = 'visible';
+      element.style.display = 'inline-block';
+      
+      // Check if gradient is working by testing computed styles
+      const computedStyle = window.getComputedStyle(element);
+      const textFillColor = computedStyle.webkitTextFillColor;
+      
+      // If gradient isn't working, apply fallback styling
+      if (!textFillColor || textFillColor === 'rgb(0, 0, 0)' || textFillColor === 'black') {
+        element.style.background = 'linear-gradient(135deg, #ED454A 0%, #B453E7 100%)';
+        element.style.webkitBackgroundClip = 'text';
+        element.style.webkitTextFillColor = 'transparent';
+        element.style.backgroundClip = 'text';
+        
+        // If still not working, use solid color fallback
+        setTimeout(() => {
+          const newComputedStyle = window.getComputedStyle(element);
+          if (!newComputedStyle.webkitTextFillColor || newComputedStyle.webkitTextFillColor === 'rgb(0, 0, 0)') {
+            element.style.webkitTextFillColor = '';
+            element.style.color = '#ED454A';
+            element.style.textShadow = '0 0 10px rgba(180, 83, 231, 0.5)';
+          }
+        }, 100);
+      }
+    });
   }
 
-  // Start the magic
-  init();
+  // ===== FALLBACK CONTENT VISIBILITY =====
+  function ensureContentVisibility() {
+    const criticalElements = [
+      '.hero-content',
+      '.logo-container', 
+      '.main-heading',
+      '.heading-word',
+      '.subtitle',
+      '.podcast-preview',
+      '.waitlist-form-container',
+      '.stat-item',
+      '.header__marq'
+    ];
+    
+    criticalElements.forEach(selector => {
+      const elements = document.querySelectorAll(selector);
+      elements.forEach(el => {
+        if (el) {
+          el.style.opacity = '1';
+          el.style.visibility = 'visible';
+          el.style.transform = 'none';
+          el.style.display = el.style.display || '';
+        }
+      });
+    });
+    
+    // Ensure gradient text is visible
+    ensureGradientTextVisibility();
+  }
+
+  // ===== INITIALIZE EVERYTHING =====
+  function init() {
+    // Ensure content is visible immediately
+    ensureContentVisibility();
+    
+    // Additional gradient text check after a short delay
+    setTimeout(() => {
+      ensureGradientTextVisibility();
+    }, 200);
+    
+    try {
+      initAnimations();
+      setupParallax();
+      setupForm();
+      setupInteractiveAnimations();
+      handleResize();
+    } catch (error) {
+      console.error('Initialization error:', error);
+      // Ensure content is still visible even if initialization fails
+      ensureContentVisibility();
+    }
+  }
+
+  // Start the magic - with multiple fallbacks
+  try {
+    init();
+  } catch (error) {
+    console.error('Critical initialization error:', error);
+    ensureContentVisibility();
+  }
+
+  // Additional safety nets
+  setTimeout(() => {
+    ensureContentVisibility();
+    ensureGradientTextVisibility();
+  }, 500);
+
+  setTimeout(() => {
+    ensureGradientTextVisibility();
+  }, 1000);
 
   // ===== PERFORMANCE OPTIMIZATION =====
   // Preload critical resources
