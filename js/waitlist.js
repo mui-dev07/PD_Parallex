@@ -975,4 +975,156 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   preloadImages();
+
+  // ===== YOUTUBE PLAYLIST MODAL FUNCTIONALITY =====
+  const podcastPlayer = document.getElementById('podcastPlayer');
+  const modal = document.getElementById('playlistModal');
+  const closeModal = document.getElementById('closeModal');
+  const youtubePlayer = document.getElementById('youtubePlayer');
+  
+  // YouTube playlist URL - embed format
+  const playlistEmbedUrl = 'https://www.youtube.com/embed/videoseries?list=PLMQYoEoYSyuN4C4G1QjsJBnrPTWsF18Aj&autoplay=1&rel=0&modestbranding=1';
+  
+  // Open modal when podcast player is clicked
+  if (podcastPlayer) {
+    podcastPlayer.addEventListener('click', function() {
+      openModal();
+    });
+  }
+  
+  // Close modal when close button is clicked
+  if (closeModal) {
+    closeModal.addEventListener('click', function() {
+      closeModalFunc();
+    });
+  }
+  
+  // Close modal when clicking outside the modal content
+  if (modal) {
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) {
+        closeModalFunc();
+      }
+    });
+  }
+  
+  // Close modal with Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && modal && modal.classList.contains('show')) {
+      closeModalFunc();
+    }
+  });
+  
+  function openModal() {
+    if (modal && youtubePlayer) {
+      // Set the YouTube playlist URL
+      youtubePlayer.src = playlistEmbedUrl;
+      
+      // Show modal with animation
+      modal.style.display = 'flex';
+      
+      // Force reflow for animation
+      modal.offsetHeight;
+      
+      // Add show class for animation
+      modal.classList.add('show');
+      
+      // Prevent body scroll
+      document.body.style.overflow = 'hidden';
+      
+      // Add loading state
+      modal.setAttribute('aria-hidden', 'false');
+      
+      // Focus management for accessibility
+      if (closeModal) {
+        closeModal.focus();
+      }
+    }
+  }
+  
+  function closeModalFunc() {
+    if (modal && youtubePlayer) {
+      // Remove show class for animation
+      modal.classList.remove('show');
+      
+      // Wait for animation to complete before hiding
+      setTimeout(() => {
+        modal.style.display = 'none';
+        // Stop video by removing src
+        youtubePlayer.src = '';
+      }, 400);
+      
+      // Restore body scroll
+      document.body.style.overflow = '';
+      
+      // Update accessibility
+      modal.setAttribute('aria-hidden', 'true');
+      
+      // Return focus to the trigger element
+      if (podcastPlayer) {
+        podcastPlayer.focus();
+      }
+    }
+  }
+  
+  // Handle window resize to maintain responsive design
+  window.addEventListener('resize', function() {
+    if (modal && modal.classList.contains('show')) {
+      // Recalculate modal positioning if needed
+      const modalContent = modal.querySelector('.modal-content');
+      if (modalContent) {
+        // Force recalculation of responsive units
+        modalContent.style.width = modalContent.style.width;
+      }
+    }
+  });
+  
+  // Preload modal for better performance
+  function preloadModal() {
+    if (modal) {
+      modal.style.display = 'flex';
+      modal.style.opacity = '0';
+      modal.style.pointerEvents = 'none';
+      
+      setTimeout(() => {
+        modal.style.display = 'none';
+        modal.style.opacity = '';
+        modal.style.pointerEvents = '';
+      }, 100);
+    }
+  }
+  
+  // Preload after a short delay
+  setTimeout(preloadModal, 2000);
+  
+  // Enhanced accessibility
+  if (modal) {
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-labelledby', 'modal-title');
+    modal.setAttribute('aria-hidden', 'true');
+    
+    // Add keyboard navigation within modal
+    modal.addEventListener('keydown', function(e) {
+      if (e.key === 'Tab') {
+        const focusableElements = modal.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+        
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            lastElement.focus();
+            e.preventDefault();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            firstElement.focus();
+            e.preventDefault();
+          }
+        }
+      }
+    });
+  }
 }); 
