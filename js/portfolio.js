@@ -1,646 +1,880 @@
 document.addEventListener("DOMContentLoaded", function () {
-    "use strict";
+  "use strict";
 
-    // ===== DEVICE DETECTION =====
-    const isMobile = window.innerWidth <= 768;
-    const isTablet = window.innerWidth <= 991 && window.innerWidth > 768;
-    const isDesktop = window.innerWidth > 991;
+  // ===== DEVICE DETECTION =====
+  const isMobile = window.innerWidth <= 768;
+  const isTablet = window.innerWidth <= 991 && window.innerWidth > 768;
+  const isDesktop = window.innerWidth > 991;
 
-    // ===== INITIALIZE LIBRARIES =====
-    if (typeof Splitting !== 'undefined') {
-        Splitting();
+  // ===== INITIALIZE LIBRARIES =====
+  if (typeof Splitting !== "undefined") {
+    Splitting();
+  }
+
+  // Initialize luxy for smooth scrolling
+  if (typeof luxy !== "undefined") {
+    luxy.init({
+      wrapper: "#luxy",
+      targets: ".luxy-el",
+      wrapperSpeed: isMobile ? 0.8 : 0.95,
+    });
+  }
+
+  // Register GSAP plugins
+  if (typeof gsap !== "undefined") {
+    gsap.registerPlugin(ScrollTrigger);
+  }
+
+  // ===== NAVBAR FUNCTIONALITY =====
+  function initNavbar() {
+    // Navigation functionality is now handled by initNavigation()
+    // This function is kept for compatibility but functionality moved
+  }
+
+  // ===== ACTIVE LINK HIGHLIGHTING =====
+  function updateActiveLink() {
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-link');
+    
+    let current = '';
+    
+    sections.forEach(section => {
+      const sectionTop = section.offsetTop;
+      const sectionHeight = section.clientHeight;
+      if (scrollY >= (sectionTop - 200)) {
+        current = section.getAttribute('id');
+      }
+    });
+
+    navLinks.forEach(link => {
+      link.classList.remove('active');
+      if (link.getAttribute('href') === `#${current}`) {
+        link.classList.add('active');
+      }
+    });
+  }
+
+  // Add scroll listener for active link highlighting
+  window.addEventListener("scroll", updateActiveLink);
+
+  // ===== GSAP ANIMATIONS =====
+
+  // Initial page load animation (similar to original)
+  function initPageAnimations() {
+    const gTl = gsap.timeline();
+
+    // Animate hero title characters
+    if (document.querySelector(".hero-title .char")) {
+      gTl.from(".hero-title .char", {
+        duration: 1,
+        opacity: 0,
+        yPercent: 130,
+        stagger: 0.06,
+        ease: "back.out",
+      });
     }
 
-    // Initialize luxy for smooth scrolling
-    if (typeof luxy !== 'undefined') {
-        luxy.init({
-            wrapper: '#luxy',
-            targets: '.luxy-el',
-            wrapperSpeed: isMobile ? 0.8 : 0.95
-        });
+    // Animate hero image with clip-path (similar to original)
+    gTl.to(
+      ".hero-image .image-container",
+      {
+        duration: 2,
+        clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+        scale: 1,
+        ease: "expo.out",
+      },
+      "-=1"
+    );
+
+    // Animate hero elements
+    gTl
+      .from(
+        ".hero-subtitle",
+        {
+          duration: 0.8,
+          opacity: 0,
+          yPercent: 100,
+          ease: "expo.out",
+        },
+        "-=1.5"
+      )
+      .from(
+        ".hero-cta",
+        {
+          duration: 0.8,
+          opacity: 0,
+          yPercent: 100,
+          ease: "expo.out",
+        },
+        "-=1.3"
+      )
+      .from(
+        ".scroll-indicator",
+        {
+          duration: 0.8,
+          opacity: 0,
+          yPercent: 100,
+          ease: "expo.out",
+        },
+        "-=1"
+      );
+  }
+
+  // Section title squares rotation (from original)
+  function initSectionSquares() {
+    const gsapSq = gsap.utils.toArray(".section-title__square");
+    gsapSq.forEach((gSq, i) => {
+      const scrubValue = isMobile ? 1.5 : 1.9;
+      const rotat = gsap.from(gSq, {
+        duration: 3,
+        rotation: 720,
+      });
+      ScrollTrigger.create({
+        trigger: gSq,
+        animation: rotat,
+        start: "top bottom",
+        scrub: scrubValue,
+      });
+    });
+  }
+
+  // Hero parallax effects (enhanced from original)
+  function initHeroParallax() {
+    const scrubValue = isMobile ? 1.5 : 1.9;
+    const parallaxIntensity = isMobile ? 0.7 : 1;
+
+    // Title parallax (similar to original title_paralax)
+    gsap.to(".title-line:first-child", {
+      scrollTrigger: {
+        trigger: ".hero",
+        start: "top top",
+        scrub: scrubValue,
+      },
+      yPercent: -150 * parallaxIntensity,
+    });
+
+    // Stroke text movement (similar to original)
+    gsap.to(".title-line.stroke", {
+      scrollTrigger: {
+        trigger: ".hero",
+        start: "top top",
+        scrub: scrubValue,
+      },
+      xPercent: isMobile ? 30 : 50,
+    });
+
+    // Hero image parallax (similar to original header__img)
+    gsap.to(".hero-image", {
+      scrollTrigger: {
+        trigger: ".hero",
+        start: "top top",
+        scrub: scrubValue,
+      },
+      xPercent: isMobile ? -40 : -70,
+    });
+
+    gsap.to(".hero-image img", {
+      scrollTrigger: {
+        trigger: ".hero",
+        start: "top top",
+        scrub: scrubValue,
+      },
+      scale: isMobile ? 1.15 : 1.3,
+    });
+  }
+
+  // Portfolio animations (similar to original work section)
+  function initPortfolioAnimations() {
+    const portfolioItems = gsap.utils.toArray(".portfolio-item");
+    const scrubValue = isMobile ? 1.5 : 1.9;
+
+    // Portfolio items parallax (similar to work__item)
+    gsap.from(portfolioItems, {
+      y: (i, el) =>
+        (1 - parseFloat(el.getAttribute("data-speed"))) * (isMobile ? 0.6 : 1),
+      scrollTrigger: {
+        trigger: ".portfolio-grid",
+        start: "top bottom",
+        scrub: scrubValue,
+      },
+    });
+
+    // Portfolio images scale effect
+    gsap.from(".portfolio-card .card-image img", {
+      scale: isMobile ? 1.2 : 1.6,
+      scrollTrigger: {
+        trigger: ".portfolio-grid",
+        start: "top bottom",
+        scrub: scrubValue,
+      },
+    });
+
+    // Individual card animations
+    portfolioItems.forEach((item, index) => {
+      gsap.from(item, {
+        scrollTrigger: {
+          trigger: item,
+          start: "top 90%",
+        },
+        duration: 0.8,
+        opacity: 0,
+        y: 50,
+        delay: index * 0.1,
+        ease: "power2.out",
+      });
+    });
+  }
+
+  // About section animations (similar to original about section)
+  function initAboutAnimations() {
+    const scrubValue = isMobile ? 1.5 : 1.9;
+
+    // About image parallax (similar to about__img)
+    gsap.from(".about-image", {
+      scrollTrigger: {
+        trigger: ".about-section",
+        start: "top bottom",
+        scrub: scrubValue,
+      },
+      yPercent: isMobile ? 50 : 80,
+    });
+
+    gsap.from(".about-image img", {
+      scrollTrigger: {
+        trigger: ".about-section",
+        start: "top bottom",
+        scrub: scrubValue,
+      },
+      scale: isMobile ? 1.3 : 1.6,
+    });
+
+    // About text parallax (similar to about__txt)
+    gsap.to(".about-text", {
+      scrollTrigger: {
+        trigger: ".about-container",
+        start: "top bottom",
+        scrub: scrubValue,
+      },
+      yPercent: isMobile ? 30 : 50,
+    });
+
+    // Skills grid parallax (similar to benefits)
+    gsap.from(".skill-item", {
+      x: (i, el) =>
+        (1 - parseFloat(el.getAttribute("data-speed") || -200)) *
+        (isMobile ? 0.5 : 1),
+      scrollTrigger: {
+        trigger: ".skills-grid",
+        start: "top bottom",
+        scrub: scrubValue,
+      },
+    });
+  }
+
+  // Experience slider animations
+  function initExperienceAnimations() {
+    const scrubValue = isMobile ? 1.5 : 1.9;
+
+    // Slider elements parallax
+    gsap.from(".nav-btn", {
+      x: (i, el) =>
+        (1 - parseFloat(el.getAttribute("data-speed") || 400)) *
+        (isMobile ? 0.4 : 1),
+      scrollTrigger: {
+        trigger: ".experience-slider",
+        start: "top bottom",
+        scrub: scrubValue,
+      },
+    });
+  }
+
+  // Testimonials animations
+  function initTestimonialsAnimations() {
+    const testimonialCards = gsap.utils.toArray(".testimonial-card");
+    const scrubValue = isMobile ? 1.5 : 1.9;
+
+    // Testimonial cards parallax
+    gsap.from(testimonialCards, {
+      y: (i, el) =>
+        (1 - parseFloat(el.getAttribute("data-speed"))) * (isMobile ? 0.6 : 1),
+      scrollTrigger: {
+        trigger: ".testimonials-grid",
+        start: "top bottom",
+        scrub: scrubValue,
+      },
+    });
+
+    // Individual card animations
+    testimonialCards.forEach((card, index) => {
+      gsap.from(card, {
+        scrollTrigger: {
+          trigger: card,
+          start: "top 85%",
+        },
+        duration: 0.8,
+        opacity: 0,
+        y: 50,
+        delay: index * 0.1,
+        ease: "power2.out",
+      });
+    });
+  }
+
+  // Hire me section animations
+  function initHireAnimations() {
+    const hireFeatures = gsap.utils.toArray(".hire-feature");
+    const scrubValue = isMobile ? 1.5 : 1.9;
+
+    // Hire features parallax
+    gsap.from(hireFeatures, {
+      x: (i, el) =>
+        (1 - parseFloat(el.getAttribute("data-speed"))) * (isMobile ? 0.5 : 1),
+      scrollTrigger: {
+        trigger: ".hire-features",
+        start: "top bottom",
+        scrub: scrubValue,
+      },
+    });
+
+    // Individual feature animations
+    hireFeatures.forEach((feature, index) => {
+      gsap.from(feature, {
+        scrollTrigger: {
+          trigger: feature,
+          start: "top 85%",
+        },
+        duration: 0.6,
+        opacity: 0,
+        y: 30,
+        delay: index * 0.1,
+        ease: "power2.out",
+      });
+    });
+
+    // Hire CTA animation
+    gsap.from(".hire-cta", {
+      scrollTrigger: {
+        trigger: ".hire-cta",
+        start: "top 85%",
+      },
+      duration: 0.8,
+      opacity: 0,
+      y: 30,
+      ease: "power2.out",
+    });
+  }
+
+  // Footer animations (similar to original footer)
+  function initFooterAnimations() {
+    const scrubValue = isMobile ? 1.5 : 1.9;
+
+    // Social links parallax
+    gsap.from(".social-link", {
+      x: (i, el) =>
+        (1 - parseFloat(el.getAttribute("data-speed"))) * (isMobile ? 0.3 : 1),
+      scrollTrigger: {
+        trigger: ".footer",
+        start: "top bottom",
+        scrub: scrubValue,
+      },
+    });
+
+    // Footer text animation (similar to original footer__div span)
+    gsap.from(".footer-text span", {
+      y: (i, el) =>
+        (1 - parseFloat(el.getAttribute("data-speed"))) * (isMobile ? 0.5 : 1),
+      opacity: 0,
+      scrollTrigger: {
+        trigger: ".footer-bottom",
+        start: "top bottom",
+        end: "bottom bottom",
+        scrub: scrubValue,
+      },
+    });
+  }
+
+  // ===== EXPERIENCE SLIDER =====
+  function initExperienceSlider() {
+    const slides = document.querySelectorAll(".slide");
+    const navBtns = document.querySelectorAll(".nav-btn");
+    const progressBar = document.querySelector(".progress-bar");
+    let currentSlide = 0;
+
+    function showSlide(index) {
+      // Remove active class from all slides and buttons
+      slides.forEach((slide) => slide.classList.remove("active"));
+      navBtns.forEach((btn) => btn.classList.remove("active"));
+
+      // Add active class to current slide and button
+      if (slides[index]) slides[index].classList.add("active");
+      if (navBtns[index]) navBtns[index].classList.add("active");
+
+      // Update progress bar
+      if (progressBar) {
+        progressBar.style.transform = `translateX(${index * 100}%)`;
+      }
+
+      currentSlide = index;
     }
 
-    // Register GSAP plugins
-    if (typeof gsap !== 'undefined') {
-        gsap.registerPlugin(ScrollTrigger);
+    // Navigation button event listeners
+    navBtns.forEach((btn, index) => {
+      btn.addEventListener("click", () => showSlide(index));
+    });
+
+    // Auto-play slider
+    setInterval(() => {
+      currentSlide = (currentSlide + 1) % slides.length;
+      showSlide(currentSlide);
+    }, 5000);
+  }
+
+  // ===== PROJECT MODAL =====
+  function initProjectModal() {
+    const portfolioCards = document.querySelectorAll(".portfolio-card");
+    const modal = document.getElementById("projectModal");
+    const modalClose = document.getElementById("modalClose");
+    const modalOverlay = document.querySelector(".modal-overlay");
+    const modalImage = document.getElementById("modalImage");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalDescription = document.getElementById("modalDescription");
+    const modalTech = document.getElementById("modalTech");
+    const modalLiveLink = document.getElementById("modalLiveLink");
+
+    // Project data
+    const projectData = {
+      1: {
+        title: "E-Commerce Platform",
+        description:
+          "A full-stack e-commerce solution built with React and Node.js. Features include user authentication, product catalog, shopping cart, payment integration, and admin dashboard. The application uses MongoDB for data storage and implements real-time notifications.",
+        image: "img/3.jpg",
+        tech: [
+          "React",
+          "Node.js",
+          "MongoDB",
+          "Express",
+          "Stripe API",
+          "Socket.io",
+        ],
+        liveLink: "#",
+      },
+      2: {
+        title: "Portfolio Website",
+        description:
+          "A modern, responsive portfolio website showcasing creative work and projects. Built with Vue.js and enhanced with GSAP animations and Three.js for interactive 3D elements. Features smooth scrolling, parallax effects, and optimized performance.",
+        image: "img/4.jpg",
+        tech: ["Vue.js", "GSAP", "Three.js", "SCSS", "Webpack", "PWA"],
+        liveLink: "#",
+      },
+      3: {
+        title: "Mobile App Design",
+        description:
+          "A cross-platform mobile application for social networking and content sharing. Developed with React Native and integrated with Firebase for real-time data synchronization, user authentication, and cloud storage.",
+        image: "img/5.jpg",
+        tech: ["React Native", "Firebase", "Redux", "Expo", "AsyncStorage"],
+        liveLink: "#",
+      },
+      4: {
+        title: "Dashboard Analytics",
+        description:
+          "A comprehensive analytics dashboard for business intelligence and data visualization. Built with Angular and D3.js, featuring interactive charts, real-time data updates, and customizable widgets for monitoring KPIs.",
+        image: "img/6.jpg",
+        tech: [
+          "Angular",
+          "D3.js",
+          "TypeScript",
+          "RxJS",
+          "Chart.js",
+          "Material UI",
+        ],
+        liveLink: "#",
+      },
+    };
+
+    function openModal(projectId) {
+      const project = projectData[projectId];
+      if (!project) return;
+
+      // Populate modal content
+      modalImage.src = project.image;
+      modalTitle.textContent = project.title;
+      modalDescription.textContent = project.description;
+      modalLiveLink.href = project.liveLink;
+
+      // Populate tech stack
+      modalTech.innerHTML = "";
+      project.tech.forEach((tech) => {
+        const techTag = document.createElement("span");
+        techTag.className = "tech-tag";
+        techTag.textContent = tech;
+        modalTech.appendChild(techTag);
+      });
+
+      // Show modal
+      modal.classList.add("active");
+      document.body.style.overflow = "hidden";
+
+      // GSAP animation for modal content
+      gsap.from(".modal-content", {
+        duration: 0.4,
+        scale: 0.8,
+        opacity: 0,
+        ease: "back.out(1.7)",
+      });
     }
 
-    // ===== NAVBAR FUNCTIONALITY =====
+    function closeModal() {
+      modal.classList.remove("active");
+      document.body.style.overflow = "auto";
+    }
+
+    // Event listeners
+    portfolioCards.forEach((card) => {
+      card.addEventListener("click", () => {
+        const projectId = card
+          .closest(".portfolio-item")
+          .getAttribute("data-project");
+        openModal(projectId);
+      });
+    });
+
+    if (modalClose) modalClose.addEventListener("click", closeModal);
+    if (modalOverlay) modalOverlay.addEventListener("click", closeModal);
+
+    // Close modal with Escape key
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal && modal.classList.contains("active")) {
+        closeModal();
+      }
+    });
+  }
+
+  // ===== SMOOTH SCROLL FOR ANCHOR LINKS =====
+  function initSmoothScroll() {
+    const anchorLinks = document.querySelectorAll('a[href^="#"]');
+
+    anchorLinks.forEach((link) => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        const target = document.querySelector(link.getAttribute("href"));
+
+        if (target) {
+          const offsetTop = target.offsetTop - 100; // Account for fixed navbar
+
+          window.scrollTo({
+            top: offsetTop,
+            behavior: "smooth",
+          });
+        }
+      });
+    });
+  }
+
+  // ===== CTA BUTTON FUNCTIONALITY =====
+  function initCTAButtons() {
+    const viewPortfolioBtn = document.querySelector(".cta-btn.primary");
+    const getInTouchBtn = document.querySelector(".cta-btn.secondary");
+    const startProjectBtn = document.querySelector(".hire-btn.primary");
+    const sendEmailBtn = document.querySelector(".hire-btn.secondary");
+
+    if (viewPortfolioBtn) {
+      viewPortfolioBtn.addEventListener("click", () => {
+        const portfolioSection = document.getElementById("portfolio");
+        if (portfolioSection) {
+          portfolioSection.scrollIntoView({ behavior: "smooth" });
+        }
+      });
+    }
+
+    if (getInTouchBtn) {
+      getInTouchBtn.addEventListener("click", () => {
+        const contactSection = document.getElementById("contact");
+        if (contactSection) {
+          contactSection.scrollIntoView({ behavior: "smooth" });
+        }
+      });
+    }
+
+    if (startProjectBtn) {
+      startProjectBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const contactSection = document.getElementById("contact");
+        if (contactSection) {
+          contactSection.scrollIntoView({ behavior: "smooth" });
+        }
+      });
+    }
+
+    if (sendEmailBtn) {
+      sendEmailBtn.addEventListener("click", () => {
+        // Email functionality is handled by the href attribute
+        console.log("Opening email client...");
+      });
+    }
+  }
+
+  // ===== PERFORMANCE OPTIMIZATION =====
+  function initPerformanceOptimizations() {
+    // Reduce animations on mobile for better performance
+    if (isMobile) {
+      gsap.globalTimeline.timeScale(0.8);
+    }
+
+    // Pause animations when tab is not visible
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        gsap.globalTimeline.pause();
+      } else {
+        gsap.globalTimeline.resume();
+      }
+    });
+  }
+
+  // ===== RESIZE HANDLER (Fixed - no debounce) =====
+  function handleResize() {
+    // Update device detection
+    const newIsMobile = window.innerWidth <= 768;
+
+    // Refresh ScrollTrigger on device change
+    ScrollTrigger.refresh();
+  }
+
+  // Simple debounce function replacement
+  let resizeTimer;
+  window.addEventListener("resize", function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(handleResize, 250);
+  });
+
+  // Handle orientation change for mobile devices
+  window.addEventListener("orientationchange", function () {
+    setTimeout(function () {
+      ScrollTrigger.refresh();
+    }, 500);
+  });
+
+  // ===== NAVIGATION FUNCTIONALITY =====
+  function initNavigation() {
     const navbar = document.getElementById('navbar');
     const hamburger = document.getElementById('hamburger');
-    const navMenu = document.getElementById('nav-menu');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+    const sidebarClose = document.getElementById('sidebar-close');
     const navLinks = document.querySelectorAll('.nav-link');
+    const scrollToTop = document.getElementById("scrollToTop");
+    const scrollNavPopup = document.getElementById("scrollNavPopup");
+    
+    let lastScrollY = window.scrollY;
+    let isScrolling = false;
 
-    // Navbar scroll effect
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 100) {
-            navbar.classList.add('scrolled');
+    // Check if we're in mobile mode and update navbar accordingly
+    function updateNavbarMode() {
+        if (window.innerWidth <= 991) {
+            navbar.classList.add('mobile-mode');
         } else {
-            navbar.classList.remove('scrolled');
+            navbar.classList.remove('mobile-mode');
         }
-    });
+    }
 
-    // Mobile menu toggle
+    // Initial check
+    updateNavbarMode();
+
+    // Hamburger click handler
     hamburger.addEventListener('click', () => {
-        hamburger.classList.toggle('active');
-        navMenu.classList.toggle('active');
+        openSidebar();
     });
 
-    // Close mobile menu when clicking on links
-    navLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            hamburger.classList.remove('active');
-            navMenu.classList.remove('active');
+    // Sidebar close button handler
+    sidebarClose.addEventListener('click', () => {
+        closeSidebar();
+    });
+
+    // Overlay click handler
+    sidebarOverlay.addEventListener('click', () => {
+        closeSidebar();
+    });
+
+    // Navigation link handlers for sidebar
+    const sidebarLinks = sidebar.querySelectorAll('.nav-link');
+    sidebarLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href');
+            const targetSection = document.querySelector(targetId);
+            
+            if (targetSection) {
+                closeSidebar();
+                setTimeout(() => {
+                    targetSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }, 300);
+            }
         });
     });
 
-    // Active link highlighting
-    function updateActiveLink() {
-        const sections = document.querySelectorAll('section[id]');
-        const scrollPos = window.scrollY + 100;
-
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop;
-            const sectionHeight = section.offsetHeight;
-            const sectionId = section.getAttribute('id');
+    // Regular navigation link handlers
+    const regularNavLinks = document.querySelectorAll('.nav-menu .nav-link');
+    regularNavLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href');
+            const targetSection = document.querySelector(targetId);
             
-            if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
-                navLinks.forEach(link => {
-                    link.classList.remove('active');
-                    if (link.getAttribute('href') === `#${sectionId}`) {
-                        link.classList.add('active');
-                    }
+            if (targetSection) {
+                targetSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
                 });
             }
         });
-    }
-
-    window.addEventListener('scroll', updateActiveLink);
-
-    // ===== GSAP ANIMATIONS =====
-    
-    // Initial page load animation
-    function initPageAnimations() {
-        const tl = gsap.timeline();
-        
-        // Animate hero title
-        if (document.querySelector('.hero-title .char')) {
-            tl.from('.hero-title .char', {
-                duration: 1,
-                opacity: 0,
-                yPercent: 130,
-                stagger: 0.06,
-                ease: "back.out"
-            });
-        }
-        
-        // Animate hero elements
-        tl.from('.hero-subtitle', {
-            duration: 0.8,
-            opacity: 0,
-            y: 50,
-            ease: "power2.out"
-        }, "-=0.5")
-        .from('.hero-cta', {
-            duration: 0.8,
-            opacity: 0,
-            y: 50,
-            ease: "power2.out"
-        }, "-=0.6")
-        .from('.hero-image', {
-            duration: 1.2,
-            opacity: 0,
-            scale: 0.8,
-            ease: "power2.out"
-        }, "-=0.8")
-        .from('.scroll-indicator', {
-            duration: 0.8,
-            opacity: 0,
-            y: 30,
-            ease: "power2.out"
-        }, "-=0.4");
-    }
-
-    // Hero parallax effects
-    function initHeroParallax() {
-        const scrubValue = isMobile ? 1.5 : 1.9;
-        const parallaxIntensity = isMobile ? 0.7 : 1;
-
-        // Title parallax
-        gsap.to('.title-line:first-child', {
-            scrollTrigger: {
-                trigger: '.hero',
-                start: 'top top',
-                scrub: scrubValue
-            },
-            yPercent: -50 * parallaxIntensity
-        });
-
-        gsap.to('.title-line.stroke', {
-            scrollTrigger: {
-                trigger: '.hero',
-                start: 'top top',
-                scrub: scrubValue
-            },
-            xPercent: isMobile ? 30 : 50
-        });
-
-        // Hero image parallax
-        gsap.to('.hero-image', {
-            scrollTrigger: {
-                trigger: '.hero',
-                start: 'top top',
-                scrub: scrubValue
-            },
-            yPercent: isMobile ? -30 : -50
-        });
-
-        gsap.to('.hero-image img', {
-            scrollTrigger: {
-                trigger: '.hero',
-                start: 'top top',
-                scrub: scrubValue
-            },
-            scale: isMobile ? 1.2 : 1.3
-        });
-    }
-
-    // Section title animations
-    function initSectionTitleAnimations() {
-        const sectionTitles = gsap.utils.toArray('.section-title');
-        
-        sectionTitles.forEach(title => {
-            gsap.from(title, {
-                scrollTrigger: {
-                    trigger: title,
-                    start: 'top 80%',
-                    end: 'bottom 20%'
-                },
-                duration: 1,
-                opacity: 0,
-                y: 50,
-                ease: "power2.out"
-            });
-        });
-
-        // Animate section squares
-        const squares = gsap.utils.toArray('.section-title__square');
-        squares.forEach(square => {
-            const scrubValue = isMobile ? 1.5 : 1.9;
-            const rotation = gsap.from(square, {
-                duration: 3,
-                rotation: 720
-            });
-            
-            ScrollTrigger.create({
-                trigger: square,
-                animation: rotation,
-                start: 'top bottom',
-                scrub: scrubValue
-            });
-        });
-    }
-
-    // Portfolio grid animations
-    function initPortfolioAnimations() {
-        const portfolioItems = gsap.utils.toArray('.portfolio-item');
-        const scrubValue = isMobile ? 1.5 : 1.9;
-
-        portfolioItems.forEach(item => {
-            const speed = item.getAttribute('data-speed') || -200;
-            
-            gsap.from(item, {
-                scrollTrigger: {
-                    trigger: '.portfolio-grid',
-                    start: 'top bottom',
-                    scrub: scrubValue
-                },
-                y: (1 - parseFloat(speed)) * (isMobile ? 0.5 : 1)
-            });
-        });
-
-        // Portfolio card hover effects
-        portfolioItems.forEach(item => {
-            const card = item.querySelector('.portfolio-card');
-            
-            gsap.from(card, {
-                scrollTrigger: {
-                    trigger: card,
-                    start: 'top 90%'
-                },
-                duration: 0.8,
-                opacity: 0,
-                y: 50,
-                ease: "power2.out"
-            });
-        });
-    }
-
-    // About section animations
-    function initAboutAnimations() {
-        const scrubValue = isMobile ? 1.5 : 1.9;
-
-        // About image parallax
-        gsap.from('.about-image', {
-            scrollTrigger: {
-                trigger: '.about-section',
-                start: 'top bottom',
-                scrub: scrubValue
-            },
-            yPercent: isMobile ? 30 : 50
-        });
-
-        gsap.from('.about-image img', {
-            scrollTrigger: {
-                trigger: '.about-section',
-                start: 'top bottom',
-                scrub: scrubValue
-            },
-            scale: isMobile ? 1.2 : 1.4
-        });
-
-        // About text animations
-        const aboutTexts = gsap.utils.toArray('.about-text > *');
-        aboutTexts.forEach((element, index) => {
-            gsap.from(element, {
-                scrollTrigger: {
-                    trigger: element,
-                    start: 'top 80%'
-                },
-                duration: 0.8,
-                opacity: 0,
-                y: 30,
-                delay: index * 0.1,
-                ease: "power2.out"
-            });
-        });
-
-        // Skills grid animation
-        const skillItems = gsap.utils.toArray('.skill-item');
-        skillItems.forEach((item, index) => {
-            gsap.from(item, {
-                scrollTrigger: {
-                    trigger: item,
-                    start: 'top 85%'
-                },
-                duration: 0.6,
-                opacity: 0,
-                y: 30,
-                delay: index * 0.1,
-                ease: "power2.out"
-            });
-        });
-    }
-
-    // Footer animations
-    function initFooterAnimations() {
-        const scrubValue = isMobile ? 1.5 : 1.9;
-        
-        // Social links parallax
-        gsap.from('.social-link', {
-            scrollTrigger: {
-                trigger: '.footer',
-                start: 'top bottom',
-                scrub: scrubValue
-            },
-            x: (i, el) => (1 - parseFloat(el.getAttribute('data-speed'))) * (isMobile ? 0.3 : 1)
-        });
-
-        // Footer text animation
-        const footerSpans = gsap.utils.toArray('.footer-text span');
-        footerSpans.forEach(span => {
-            gsap.from(span, {
-                scrollTrigger: {
-                    trigger: '.footer-bottom',
-                    start: 'top bottom',
-                    scrub: scrubValue
-                },
-                y: (i, el) => (1 - parseFloat(el.getAttribute('data-speed'))) * (isMobile ? 0.3 : 1)
-            });
-        });
-    }
-
-    // ===== EXPERIENCE SLIDER =====
-    function initExperienceSlider() {
-        const slides = document.querySelectorAll('.slide');
-        const navBtns = document.querySelectorAll('.nav-btn');
-        const progressBar = document.querySelector('.progress-bar');
-        let currentSlide = 0;
-
-        function showSlide(index) {
-            // Remove active class from all slides and buttons
-            slides.forEach(slide => slide.classList.remove('active'));
-            navBtns.forEach(btn => btn.classList.remove('active'));
-
-            // Add active class to current slide and button
-            slides[index].classList.add('active');
-            navBtns[index].classList.add('active');
-
-            // Update progress bar
-            progressBar.style.transform = `translateX(${index * 100}%)`;
-
-            currentSlide = index;
-        }
-
-        // Navigation button event listeners
-        navBtns.forEach((btn, index) => {
-            btn.addEventListener('click', () => showSlide(index));
-        });
-
-        // Auto-play slider
-        setInterval(() => {
-            currentSlide = (currentSlide + 1) % slides.length;
-            showSlide(currentSlide);
-        }, 5000);
-    }
-
-    // ===== PROJECT MODAL =====
-    function initProjectModal() {
-        const portfolioCards = document.querySelectorAll('.portfolio-card');
-        const modal = document.getElementById('projectModal');
-        const modalClose = document.getElementById('modalClose');
-        const modalOverlay = document.querySelector('.modal-overlay');
-        const modalImage = document.getElementById('modalImage');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalDescription = document.getElementById('modalDescription');
-        const modalTech = document.getElementById('modalTech');
-        const modalLiveLink = document.getElementById('modalLiveLink');
-        const modalCodeLink = document.getElementById('modalCodeLink');
-
-        // Project data
-        const projectData = {
-            1: {
-                title: "E-Commerce Platform",
-                description: "A full-stack e-commerce solution built with React and Node.js. Features include user authentication, product catalog, shopping cart, payment integration, and admin dashboard. The application uses MongoDB for data storage and implements real-time notifications.",
-                image: "img/3.jpg",
-                tech: ["React", "Node.js", "MongoDB", "Express", "Stripe API", "Socket.io"],
-                liveLink: "#",
-                codeLink: "#"
-            },
-            2: {
-                title: "Portfolio Website",
-                description: "A modern, responsive portfolio website showcasing creative work and projects. Built with Vue.js and enhanced with GSAP animations and Three.js for interactive 3D elements. Features smooth scrolling, parallax effects, and optimized performance.",
-                image: "img/4.jpg",
-                tech: ["Vue.js", "GSAP", "Three.js", "SCSS", "Webpack", "PWA"],
-                liveLink: "#",
-                codeLink: "#"
-            },
-            3: {
-                title: "Mobile App Design",
-                description: "A cross-platform mobile application for social networking and content sharing. Developed with React Native and integrated with Firebase for real-time data synchronization, user authentication, and cloud storage.",
-                image: "img/5.jpg",
-                tech: ["React Native", "Firebase", "Redux", "Expo", "AsyncStorage"],
-                liveLink: "#",
-                codeLink: "#"
-            },
-            4: {
-                title: "Dashboard Analytics",
-                description: "A comprehensive analytics dashboard for business intelligence and data visualization. Built with Angular and D3.js, featuring interactive charts, real-time data updates, and customizable widgets for monitoring KPIs.",
-                image: "img/6.jpg",
-                tech: ["Angular", "D3.js", "TypeScript", "RxJS", "Chart.js", "Material UI"],
-                liveLink: "#",
-                codeLink: "#"
-            }
-        };
-
-        function openModal(projectId) {
-            const project = projectData[projectId];
-            if (!project) return;
-
-            // Populate modal content
-            modalImage.src = project.image;
-            modalTitle.textContent = project.title;
-            modalDescription.textContent = project.description;
-            modalLiveLink.href = project.liveLink;
-            modalCodeLink.href = project.codeLink;
-
-            // Populate tech stack
-            modalTech.innerHTML = '';
-            project.tech.forEach(tech => {
-                const techTag = document.createElement('span');
-                techTag.className = 'tech-tag';
-                techTag.textContent = tech;
-                modalTech.appendChild(techTag);
-            });
-
-            // Show modal
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-
-            // GSAP animation for modal content
-            gsap.from('.modal-content', {
-                duration: 0.4,
-                scale: 0.8,
-                opacity: 0,
-                ease: "back.out(1.7)"
-            });
-        }
-
-        function closeModal() {
-            modal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-
-        // Event listeners
-        portfolioCards.forEach(card => {
-            card.addEventListener('click', () => {
-                const projectId = card.closest('.portfolio-item').getAttribute('data-project');
-                openModal(projectId);
-            });
-        });
-
-        modalClose.addEventListener('click', closeModal);
-        modalOverlay.addEventListener('click', closeModal);
-
-        // Close modal with Escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && modal.classList.contains('active')) {
-                closeModal();
-            }
-        });
-    }
-
-    // ===== SMOOTH SCROLL FOR ANCHOR LINKS =====
-    function initSmoothScroll() {
-        const anchorLinks = document.querySelectorAll('a[href^="#"]');
-        
-        anchorLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const target = document.querySelector(link.getAttribute('href'));
-                
-                if (target) {
-                    const offsetTop = target.offsetTop - 80; // Account for fixed navbar
-                    
-                    window.scrollTo({
-                        top: offsetTop,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-    }
-
-    // ===== CTA BUTTON FUNCTIONALITY =====
-    function initCTAButtons() {
-        const viewPortfolioBtn = document.querySelector('.cta-btn.primary');
-        const getInTouchBtn = document.querySelector('.cta-btn.secondary');
-
-        if (viewPortfolioBtn) {
-            viewPortfolioBtn.addEventListener('click', () => {
-                const portfolioSection = document.getElementById('portfolio');
-                if (portfolioSection) {
-                    portfolioSection.scrollIntoView({ behavior: 'smooth' });
-                }
-            });
-        }
-
-        if (getInTouchBtn) {
-            getInTouchBtn.addEventListener('click', () => {
-                const contactSection = document.getElementById('contact');
-                if (contactSection) {
-                    contactSection.scrollIntoView({ behavior: 'smooth' });
-                }
-            });
-        }
-    }
-
-    // ===== INTERSECTION OBSERVER FOR ANIMATIONS =====
-    function initIntersectionObserver() {
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('in-view');
-                }
-            });
-        }, observerOptions);
-
-        // Observe elements for fade-in animations
-        const elementsToObserve = document.querySelectorAll(
-            '.portfolio-card, .skill-item, .slide, .footer-content'
-        );
-        
-        elementsToObserve.forEach(el => observer.observe(el));
-    }
-
-    // ===== PERFORMANCE OPTIMIZATION =====
-    function initPerformanceOptimizations() {
-        // Reduce animations on mobile for better performance
-        if (isMobile) {
-            gsap.globalTimeline.timeScale(0.8);
-        }
-
-        // Pause animations when tab is not visible
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                gsap.globalTimeline.pause();
-            } else {
-                gsap.globalTimeline.resume();
-            }
-        });
-
-        // Lazy load images
-        const images = document.querySelectorAll('img[data-src]');
-        const imageObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    img.src = img.dataset.src;
-                    img.classList.remove('lazy');
-                    imageObserver.unobserve(img);
-                }
-            });
-        });
-
-        images.forEach(img => imageObserver.observe(img));
-    }
-
-    // ===== RESIZE HANDLER =====
-    function handleResize() {
-        // Update device detection
-        const newIsMobile = window.innerWidth <= 768;
-        
-        if (newIsMobile !== isMobile) {
-            // Refresh ScrollTrigger on device change
-            ScrollTrigger.refresh();
-        }
-    }
-
-    window.addEventListener('resize', gsap.utils.debounce(handleResize, 250));
-
-    // ===== INITIALIZE ALL FUNCTIONS =====
-    function init() {
-        try {
-            initPageAnimations();
-            initHeroParallax();
-            initSectionTitleAnimations();
-            initPortfolioAnimations();
-            initAboutAnimations();
-            initFooterAnimations();
-            initExperienceSlider();
-            initProjectModal();
-            initSmoothScroll();
-            initCTAButtons();
-            initIntersectionObserver();
-            initPerformanceOptimizations();
-            
-            console.log('Portfolio initialized successfully!');
-        } catch (error) {
-            console.error('Error initializing portfolio:', error);
-        }
-    }
-
-    // ===== START INITIALIZATION =====
-    init();
-
-    // ===== REFRESH SCROLLTRIGGER ON LOAD =====
-    window.addEventListener('load', () => {
-        ScrollTrigger.refresh();
     });
 
-    // ===== CUSTOM CURSOR (DESKTOP ONLY) =====
-    if (isDesktop) {
-        const cursor = document.createElement('div');
-        cursor.className = 'custom-cursor';
-        cursor.innerHTML = '<div class="cursor-dot"></div>';
-        document.body.appendChild(cursor);
-
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
+    // Scroll to top functionality
+    if (scrollToTop) {
+        scrollToTop.addEventListener("click", () => {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
         });
 
-        // Add cursor hover effects
-        const hoverElements = document.querySelectorAll('a, button, .portfolio-card');
-        hoverElements.forEach(el => {
-            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        // Double click to show navigation popup
+        scrollToTop.addEventListener("dblclick", () => {
+            scrollNavPopup.classList.toggle("active");
+            
+            // Hide popup after 3 seconds
+            setTimeout(() => {
+                scrollNavPopup.classList.remove("active");
+            }, 3000);
         });
     }
 
-    // ===== PRELOADER =====
-    const preloader = document.querySelector('.preloader');
-    if (preloader) {
-        window.addEventListener('load', () => {
-            gsap.to(preloader, {
-                duration: 0.8,
-                opacity: 0,
-                ease: "power2.out",
-                onComplete: () => {
-                    preloader.style.display = 'none';
-                }
+    // Close popup when clicking outside
+    if (scrollNavPopup) {
+        document.addEventListener("click", (e) => {
+            if (!scrollToTop.contains(e.target) && !scrollNavPopup.contains(e.target)) {
+                scrollNavPopup.classList.remove("active");
+            }
+        });
+
+        // Close popup navigation when clicking on links
+        const popupLinks = scrollNavPopup.querySelectorAll(".nav-link");
+        popupLinks.forEach((link) => {
+            link.addEventListener("click", () => {
+                scrollNavPopup.classList.remove("active");
             });
         });
     }
 
-    // ===== ERROR HANDLING =====
-    window.addEventListener('error', (e) => {
-        console.error('Portfolio error:', e.error);
+    function openSidebar() {
+        hamburger.classList.add('active');
+        sidebar.classList.add('active');
+        sidebarOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeSidebar() {
+        hamburger.classList.remove('active');
+        sidebar.classList.remove('active');
+        sidebarOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    // Scroll handler for navbar hide/show and scroll-to-top widget
+    function handleScroll() {
+        if (isScrolling) return;
+        
+        isScrolling = true;
+        requestAnimationFrame(() => {
+            const currentScrollY = window.scrollY;
+            
+            // Only handle navbar scroll effects on larger screens
+            if (window.innerWidth > 991) {
+                // Add scrolled class for styling
+                if (currentScrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+
+                // Hide/show navbar based on scroll direction
+                if (currentScrollY > lastScrollY && currentScrollY > 100) {
+                    navbar.classList.add('hidden');
+                } else {
+                    navbar.classList.remove('hidden');
+                }
+            }
+
+            // Show/hide scroll to top button
+            if (scrollToTop) {
+                if (currentScrollY > 300) {
+                    scrollToTop.classList.add("visible");
+                } else {
+                    scrollToTop.classList.remove("visible");
+                }
+            }
+
+            lastScrollY = currentScrollY;
+            isScrolling = false;
+        });
+    }
+
+    // Scroll event listener
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        updateNavbarMode();
+        if (window.innerWidth > 991) {
+            closeSidebar();
+        }
     });
 
-}); 
+    // Close sidebar on escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+            closeSidebar();
+        }
+    });
+  }
+
+  // ===== INITIALIZE ALL FUNCTIONS =====
+  function init() {
+    try {
+      initPageAnimations();
+      initSectionSquares();
+      initHeroParallax();
+      initPortfolioAnimations();
+      initAboutAnimations();
+      initExperienceAnimations();
+      initTestimonialsAnimations();
+      initHireAnimations();
+      initFooterAnimations();
+      initExperienceSlider();
+      initProjectModal();
+      initSmoothScroll();
+      initCTAButtons();
+      initPerformanceOptimizations();
+      initNavigation();
+
+      console.log("Portfolio initialized successfully!");
+    } catch (error) {
+      console.error("Error initializing portfolio:", error);
+    }
+  }
+
+  // ===== START INITIALIZATION =====
+  init();
+
+  // ===== REFRESH SCROLLTRIGGER ON LOAD =====
+  window.addEventListener("load", () => {
+    ScrollTrigger.refresh();
+  });
+
+  // ===== ERROR HANDLING =====
+  window.addEventListener("error", (e) => {
+    console.error("Portfolio error:", e.error);
+  });
+});
