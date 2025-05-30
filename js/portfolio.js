@@ -275,16 +275,45 @@ document.addEventListener("DOMContentLoaded", function () {
   function initExperienceAnimations() {
     const scrubValue = isMobile ? 1.5 : 1.9;
 
-    // Slider elements parallax
-    gsap.from(".nav-btn", {
-      x: (i, el) =>
-        (1 - parseFloat(el.getAttribute("data-speed") || 400)) *
-        (isMobile ? 0.4 : 1),
+    // Animate the entire experience section
+    gsap.from(".experience-slider", {
       scrollTrigger: {
-        trigger: ".experience-slider",
-        start: "top bottom",
-        scrub: scrubValue,
+        trigger: ".experience-section",
+        start: "top 80%",
+        end: "bottom 20%",
       },
+      duration: 1,
+      opacity: 0,
+      y: 50,
+      ease: "power2.out",
+    });
+
+    // Animate slider controls (pagination) to center when section is in view
+    gsap.from(".slider-controls", {
+      scrollTrigger: {
+        trigger: ".experience-section",
+        start: "top 70%",
+        end: "center center",
+      },
+      duration: 0.8,
+      opacity: 0,
+      y: 30,
+      delay: 0.3,
+      ease: "power2.out",
+    });
+
+    // Animate navigation buttons individually
+    gsap.from(".nav-btn", {
+      scrollTrigger: {
+        trigger: ".slider-controls",
+        start: "top 80%",
+      },
+      duration: 0.6,
+      opacity: 0,
+      scale: 0.8,
+      stagger: 0.1,
+      delay: 0.5,
+      ease: "back.out(1.7)",
     });
   }
 
@@ -840,6 +869,118 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  // ===== SHOOTING STARS FUNCTIONALITY =====
+  function initShootingStars() {
+    const galaxyBg = document.querySelector('.galaxy-bg');
+    if (!galaxyBg) return;
+    
+    let shootingStarTimer;
+    
+    // Different shooting star types and directions
+    const starTypes = ['type-1', 'type-2', 'type-3'];
+    const directions = [
+      'shoot-from-top-left',
+      'shoot-from-top-right', 
+      'shoot-from-left',
+      'shoot-from-right',
+      'shoot-from-bottom-left',
+      'shoot-from-bottom-right'
+    ];
+    
+    function createShootingStar(type, direction) {
+      const star = document.createElement('div');
+      star.className = `shooting-star ${type} ${direction}`;
+      
+      // Position the star at the starting edge based on direction
+      const startPositions = {
+        'shoot-from-top-left': { top: '0%', left: '0%' },
+        'shoot-from-top-right': { top: '0%', right: '0%' },
+        'shoot-from-left': { top: '50%', left: '0%' },
+        'shoot-from-right': { top: '50%', right: '0%' },
+        'shoot-from-bottom-left': { bottom: '0%', left: '0%' },
+        'shoot-from-bottom-right': { bottom: '0%', right: '0%' }
+      };
+      
+      const position = startPositions[direction];
+      Object.assign(star.style, position);
+      
+      // Add random offset to make it more natural
+      if (direction.includes('top') || direction.includes('bottom')) {
+        const randomOffset = Math.random() * 30 - 15; // -15 to +15
+        if (position.top) star.style.top = `${randomOffset}%`;
+        if (position.bottom) star.style.bottom = `${randomOffset}%`;
+      } else {
+        const randomOffset = Math.random() * 30 - 15;
+        star.style.top = `${50 + randomOffset}%`;
+      }
+      
+      galaxyBg.appendChild(star);
+      
+      // Remove the star after animation completes
+      setTimeout(() => {
+        if (star.parentNode) {
+          star.parentNode.removeChild(star);
+        }
+      }, 3500);
+    }
+    
+    function createShootingStarGroup() {
+      // Create 1-3 shooting stars at random intervals
+      const numStars = Math.floor(Math.random() * 3) + 1;
+      
+      for (let i = 0; i < numStars; i++) {
+        setTimeout(() => {
+          const randomType = starTypes[Math.floor(Math.random() * starTypes.length)];
+          const randomDirection = directions[Math.floor(Math.random() * directions.length)];
+          createShootingStar(randomType, randomDirection);
+        }, i * (Math.random() * 1000 + 500)); // Stagger the stars by 0.5-1.5 seconds
+      }
+    }
+    
+    function startShootingStars() {
+      function scheduleNext() {
+        // Random interval between 10-15 seconds
+        const interval = Math.random() * 5000 + 10000; // 10000-15000ms
+        
+        shootingStarTimer = setTimeout(() => {
+          createShootingStarGroup();
+          scheduleNext(); // Schedule the next group
+        }, interval);
+      }
+      
+      // Start the first group after a short delay
+      setTimeout(() => {
+        createShootingStarGroup();
+        scheduleNext();
+      }, 3000);
+    }
+    
+    function stopShootingStars() {
+      if (shootingStarTimer) {
+        clearTimeout(shootingStarTimer);
+        shootingStarTimer = null;
+      }
+    }
+    
+    // Start shooting stars
+    startShootingStars();
+    
+    // Handle visibility change to pause/resume shooting stars
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        stopShootingStars();
+      } else {
+        startShootingStars();
+      }
+    });
+    
+    // Return control functions for potential external use
+    return {
+      start: startShootingStars,
+      stop: stopShootingStars
+    };
+  }
+
   // ===== INITIALIZE ALL FUNCTIONS =====
   function init() {
     try {
@@ -858,6 +999,7 @@ document.addEventListener("DOMContentLoaded", function () {
       initCTAButtons();
       initPerformanceOptimizations();
       initNavigation();
+      initShootingStars();
 
       console.log("Portfolio initialized successfully!");
     } catch (error) {
