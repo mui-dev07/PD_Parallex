@@ -1,3 +1,56 @@
+/* ===== PERFORMANCE OPTIMIZATIONS ===== */
+/* Enable hardware acceleration and optimize rendering */
+* {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  -webkit-transform-style: preserve-3d;
+}
+
+/* Optimize animations for better performance */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Keep background animations but optimize them for mobile */
+@media (max-width: 768px) {
+  .floating-shapes .shape {
+    animation-duration: 40s !important; /* Slower animation for better performance */
+    opacity: 0.6 !important; /* Slightly more transparent on mobile */
+  }
+  
+  .audio-waves .wave {
+    animation-duration: 3s !important;
+    opacity: 0.7 !important;
+  }
+  
+  .equalizer .bar {
+    animation-duration: 1s !important;
+  }
+}
+
+/* Ensure background elements are always visible */
+.floating-shapes,
+.audio-waves {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
+.floating-shapes .shape,
+.audio-waves .wave {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
 /* ===== ENSURE CONTENT VISIBILITY ===== */
 .hero-content,
 .logo-container,
@@ -12,7 +65,7 @@
   visibility: visible !important;
 }
 
-/* ===== CUSTOM MODERN SCROLLBAR ===== */
+/* ===== OPTIMIZED MODERN SCROLLBAR ===== */
 /* Webkit browsers (Chrome, Safari, Edge) */
 ::-webkit-scrollbar {
   width: 12px;
@@ -22,7 +75,6 @@
 ::-webkit-scrollbar-track {
   background: rgba(10, 10, 10, 0.3);
   border-radius: 10px;
-  backdrop-filter: blur(10px);
   border: 1px solid rgba(75, 20, 112, 0.1);
 }
 
@@ -35,7 +87,7 @@
   );
   border-radius: 10px;
   border: 2px solid rgba(10, 10, 10, 0.2);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s ease; /* Reduced transition time */
   box-shadow: 0 4px 15px rgba(75, 20, 112, 0.3);
 }
 
@@ -47,7 +99,7 @@
     var(--primary-purple) 100%
   );
   box-shadow: 0 6px 20px rgba(129, 39, 191, 0.4);
-  transform: scale(1.05);
+  transform: scale(1.02); /* Reduced scale for performance */
 }
 
 ::-webkit-scrollbar-thumb:active {
@@ -71,40 +123,12 @@ html {
   scrollbar-color: var(--primary-purple) rgba(10, 10, 10, 0.3);
 }
 
-/* Custom scrollbar for modal content */
-.modal-content::-webkit-scrollbar {
-  width: 8px;
-}
-
-.modal-content::-webkit-scrollbar-track {
-  background: rgba(75, 20, 112, 0.1);
-  border-radius: 8px;
-}
-
-.modal-content::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    135deg,
-    var(--bright-purple) 0%,
-    var(--accent-orange) 100%
-  );
-  border-radius: 8px;
-  border: 1px solid rgba(10, 10, 10, 0.1);
-}
-
-.modal-content::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(
-    135deg,
-    var(--accent-orange) 0%,
-    var(--bright-purple) 100%
-  );
-}
-
-/* Smooth scrolling enhancement */
+/* Enhanced smooth scrolling */
 html {
   scroll-behavior: smooth;
 }
 
-/* Custom scroll indicator */
+/* Optimized scroll indicator */
 .scroll-indicator {
   position: fixed;
   top: 0;
@@ -113,9 +137,9 @@ html {
   height: 4px;
   background: rgba(10, 10, 10, 0.2);
   z-index: 9999;
-  backdrop-filter: blur(10px);
   opacity: 0.7;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.2s ease; /* Reduced transition time */
+  will-change: opacity; /* Optimize for property changes */
 }
 
 .scroll-indicator::before {
@@ -133,27 +157,17 @@ html {
   width: var(--scroll-progress, 0%);
   transition: width 0.1s ease-out;
   box-shadow: 0 0 10px rgba(129, 39, 191, 0.5);
-  animation: scrollPulse 2s ease-in-out infinite;
+  will-change: width; /* Optimize for property changes */
 }
 
-/* Scrollbar animations for different sections */
-.features::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    135deg,
-    var(--secondary-brown) 0%,
-    var(--accent-orange) 100%
-  );
+/* Reduced animation for better performance */
+@media (prefers-reduced-motion: no-preference) {
+  .scroll-indicator::before {
+    animation: scrollPulse 3s ease-in-out infinite; /* Slower animation */
+  }
 }
 
-.footer::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    135deg,
-    var(--dark-brown) 0%,
-    var(--primary-purple) 100%
-  );
-}
-
-/* Scroll to top button */
+/* Optimized scroll to top button */
 .scroll-to-top {
   position: fixed;
   bottom: 30px;
@@ -174,11 +188,11 @@ html {
   opacity: 0;
   visibility: hidden;
   transform: translateY(20px) scale(0.8);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Optimized transition */
   z-index: 1000;
   box-shadow: 0 8px 25px rgba(75, 20, 112, 0.3);
-  backdrop-filter: blur(10px);
   border: 2px solid rgba(255, 255, 255, 0.1);
+  will-change: transform, opacity; /* Optimize for property changes */
 }
 
 .scroll-to-top.visible {
@@ -195,11 +209,11 @@ html {
     var(--primary-purple) 100%
   );
   box-shadow: 0 12px 35px rgba(129, 39, 191, 0.4);
-  transform: translateY(-3px) scale(1.05);
+  transform: translateY(-2px) scale(1.02); /* Reduced transform for performance */
 }
 
 .scroll-to-top:active {
-  transform: translateY(0) scale(0.95);
+  transform: translateY(0) scale(0.98); /* Reduced scale */
   box-shadow: 0 4px 15px rgba(75, 20, 112, 0.5);
 }
 
@@ -207,30 +221,25 @@ html {
   width: 24px;
   height: 24px;
   color: white;
-  transition: transform 0.3s ease;
+  transition: transform 0.2s ease; /* Reduced transition time */
 }
 
 .scroll-to-top:hover svg {
-  transform: translateY(-2px);
+  transform: translateY(-1px); /* Reduced movement */
 }
 
-/* Enhanced scroll indicator with pulse effect */
-.scroll-indicator::before {
-  animation: scrollPulse 2s ease-in-out infinite;
-}
-
+/* Optimized pulse animation */
 @keyframes scrollPulse {
   0%,
   100% {
     box-shadow: 0 0 10px rgba(129, 39, 191, 0.5);
   }
   50% {
-    box-shadow: 0 0 20px rgba(129, 39, 191, 0.8),
-      0 0 30px rgba(166, 101, 47, 0.4);
+    box-shadow: 0 0 15px rgba(129, 39, 191, 0.7);
   }
 }
 
-/* Mobile responsive scrollbar */
+/* Mobile responsive optimizations */
 @media (max-width: 768px) {
   ::-webkit-scrollbar {
     width: 8px;
@@ -250,7 +259,7 @@ html {
   }
 
   .scroll-indicator {
-    height: 3px;
+    height: 3px; /* Thinner on mobile */
   }
 }
 
@@ -715,7 +724,7 @@ body {
   font-size: clamp(1rem, 3vw, 1.4rem);
   font-weight: 400;
   color: var(--text-muted);
-  max-width: 700px;
+  max-width: 750px;
   margin: 0 auto;
   line-height: clamp(1.4, 1.5, 1.6);
   opacity: 1;
@@ -1653,7 +1662,6 @@ body {
     min-height: clamp(70px, 12vw, 90px);
     flex-direction: row;
     align-items: flex-start;
-    justify-content: flex-start;
   }
 
   .modal-title {
@@ -1877,46 +1885,117 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 100vh;
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(10px);
   z-index: 10000;
   opacity: 0;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.3s ease;
+  overflow-y: auto;
 }
 
 .modal.show {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex !important;
   opacity: 1;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .modal-content {
   background: var(--gradient-background);
   border: 1px solid rgba(129, 39, 191, 0.3);
   border-radius: var(--border-radius);
-  width: clamp(320px, 90vw, 900px);
-  max-height: 90vh;
-  overflow-y: auto;
+  width: min(90vw, 900px);
+  margin: auto;
+  position: relative;
+  transform: scale(0.8);
+  transition: transform 0.3s ease;
   box-shadow: var(--shadow-strong);
-  backdrop-filter: blur(20px);
-  transform: scale(0.8) translateY(50px);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 4rem);
 }
 
 .modal.show .modal-content {
-  transform: scale(1) translateY(0);
+  transform: scale(1);
 }
 
 .modal-header {
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border-bottom: 1px solid rgba(129, 39, 191, 0.2);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: clamp(1rem, 3vw, 1.5rem) clamp(1rem, 3vw, 2rem);
-  border-bottom: 1px solid rgba(129, 39, 191, 0.2);
-  position: relative;
-  min-height: clamp(60px, 8vw, 80px); /* Ensure minimum height */
+}
+
+.modal-body {
+  padding: clamp(1rem, 3vw, 2rem);
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* ===== EQUALIZER ANIMATION ===== */
+.equalizer {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 45px;
+  justify-content: center;
+}
+
+.equalizer .bar {
+  width: 5px;
+  background: var(--gradient-podcast);
+  border-radius: 3px;
+  animation: equalizer 2s ease-in-out infinite;
+  box-shadow: 0 0 10px rgba(129, 39, 191, 0.3);
+  transform-origin: bottom;
+}
+
+.equalizer .bar:nth-child(1) { height: 60%; animation-delay: 0s; }
+.equalizer .bar:nth-child(2) { height: 80%; animation-delay: 0.2s; }
+.equalizer .bar:nth-child(3) { height: 100%; animation-delay: 0.4s; }
+.equalizer .bar:nth-child(4) { height: 90%; animation-delay: 0.6s; }
+.equalizer .bar:nth-child(5) { height: 70%; animation-delay: 0.8s; }
+.equalizer .bar:nth-child(6) { height: 85%; animation-delay: 1.0s; }
+.equalizer .bar:nth-child(7) { height: 95%; animation-delay: 1.2s; }
+.equalizer .bar:nth-child(8) { height: 75%; animation-delay: 1.4s; }
+
+@keyframes equalizer {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.3); }
+}
+
+/* Ensure modal is always centered and responsive */
+@media (max-width: 768px) {
+  .modal {
+    padding: 1rem;
+  }
+  
+  .modal-content {
+    width: 100%;
+    margin: 1rem;
+    max-height: calc(100vh - 2rem);
+  }
+}
+
+@media (min-width: 1200px) {
+  .modal-content {
+    max-width: 1000px;
+  }
+}
+
+/* Optimize equalizer for mobile */
+@media (max-width: 480px) {
+  .equalizer {
+    height: 35px;
+    gap: 3px;
+  }
+  
+  .equalizer .bar {
+    width: 4px;
+  }
 }
 
 .modal-title {
@@ -1966,27 +2045,6 @@ body {
 
 .modal-body {
   padding: clamp(1rem, 3vw, 2rem);
-}
-
-.video-container {
-  position: relative;
-  width: 100%;
-  height: 0;
-  padding-bottom: 56.25%; /* 16:9 aspect ratio */
-  margin-bottom: clamp(1rem, 3vw, 1.5rem);
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-}
-
-.video-container iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border: none;
-  border-radius: 12px;
 }
 
 .playlist-info {
@@ -2236,4 +2294,295 @@ body {
     padding: 0.8rem;
     border-radius: 12px;
   }
+}
+
+/* ===== OPTIMIZED ANIMATION PERFORMANCE ===== */
+/* Reduce animation complexity for low-end devices */
+@media (max-width: 768px) and (max-height: 600px) {
+  .floating-shapes .shape {
+    animation-duration: 40s !important; /* Slower animation */
+    will-change: auto; /* Remove will-change on mobile */
+  }
+  
+  .audio-waves .wave {
+    animation-duration: 3s !important;
+    will-change: auto;
+  }
+  
+  .equalizer .bar {
+    animation-duration: 1s !important;
+    will-change: auto;
+  }
+}
+
+/* Enhanced browser compatibility */
+.shape,
+.wave,
+.equalizer .bar {
+  will-change: transform; /* Optimize for transforms */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+}
+
+/* Optimize floating shapes */
+.floating-shapes .shape {
+  transform: translateZ(0); /* Force hardware acceleration */
+  animation: float 25s infinite linear;
+  will-change: transform;
+}
+
+/* Optimized animation for better performance */
+@keyframes float {
+  0% {
+    transform: translate3d(0, 100vh, 0) rotate(0deg) scale(0.8);
+  }
+  50% {
+    transform: translate3d(-50px, 50vh, 0) rotate(180deg) scale(1);
+  }
+  100% {
+    transform: translate3d(100px, -200px, 0) rotate(360deg) scale(1.2);
+  }
+}
+
+/* Optimized audio waves */
+.audio-waves .wave {
+  will-change: transform;
+  animation: audioWave 2s ease-in-out infinite;
+}
+
+@keyframes audioWave {
+  0%, 100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.2);
+  }
+}
+
+/* Optimized equalizer animation */
+.equalizer .bar {
+  will-change: transform;
+  animation: equalizer 2s ease-in-out infinite;
+  -webkit-transform-origin: bottom;
+  transform-origin: bottom;
+}
+
+@keyframes equalizer {
+  0%, 100% {
+    transform: scaleY(1);
+  }
+  10% { transform: scaleY(0.2); }
+  20% { transform: scaleY(0.8); }
+  30% { transform: scaleY(0.4); }
+  40% { transform: scaleY(1.2); }
+  50% { transform: scaleY(0.6); }
+  60% { transform: scaleY(0.9); }
+  70% { transform: scaleY(0.3); }
+  80% { transform: scaleY(1.1); }
+  90% { transform: scaleY(0.5); }
+}
+
+/* Optimized marquee animation */
+.header__marq-wrapp {
+  animation: marquee 30s linear infinite;
+  will-change: transform;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* Optimized glow effects */
+.card-glow {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  will-change: opacity;
+  animation: rotate 8s linear infinite;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Browser compatibility for transforms */
+.feature-card,
+.logo-image,
+.podcast-player,
+.submit-btn {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* Fallback for older browsers */
+@supports not (backdrop-filter: blur(10px)) {
+  .scroll-indicator {
+    background: rgba(10, 10, 10, 0.8);
+  }
+  
+  .scroll-to-top {
+    background: rgba(75, 20, 112, 0.9);
+  }
+}
+
+/* CSS Grid fallback for older browsers */
+@supports not (display: grid) {
+  .features-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  .feature-card {
+    flex: 0 1 calc(33.333% - 20px);
+    margin-bottom: 2rem;
+  }
+}
+
+/* Flexbox fallback for very old browsers */
+@supports not (display: flex) {
+  .form-group {
+    display: block;
+  }
+  
+  .form-group input,
+  .form-group button {
+    display: block;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+}
+
+/* ===== FORM VALIDATION STYLES ===== */
+/* Shake animation for form validation */
+@keyframes shake {
+  0%, 100% { 
+    transform: translateX(0); 
+  }
+  25% { 
+    transform: translateX(-5px); 
+  }
+  75% { 
+    transform: translateX(5px); 
+  }
+}
+
+/* Error state styles */
+input.error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
+}
+
+input.error:focus {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3) !important;
+}
+
+/* Loading state for submit button */
+.submit-btn.loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.submit-btn.loading .btn-text::after {
+  content: "...";
+  animation: dots 1.5s infinite;
+}
+
+@keyframes dots {
+  0%, 20% {
+    color: rgba(255, 255, 255, 0);
+    text-shadow: 0.25em 0 0 rgba(255, 255, 255, 0),
+                 0.5em 0 0 rgba(255, 255, 255, 0);
+  }
+  40% {
+    color: white;
+    text-shadow: 0.25em 0 0 rgba(255, 255, 255, 0),
+                 0.5em 0 0 rgba(255, 255, 255, 0);
+  }
+  60% {
+    text-shadow: 0.25em 0 0 white,
+                 0.5em 0 0 rgba(255, 255, 255, 0);
+  }
+  80%, 100% {
+    text-shadow: 0.25em 0 0 white,
+                 0.5em 0 0 white;
+  }
+}
+
+/* ===== LAYOUT AND SPACING FIXES ===== */
+/* Fix body height and prevent extra space below footer */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  min-height: 100vh !important;
+  max-height: 100vh;
+}
+
+/* Ensure wrapper doesn't create extra space */
+.wrapp {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Make main content grow to fill space */
+.main {
+  flex: 1;
+}
+
+/* Ensure footer sticks to bottom without extra space */
+.footer {
+  margin-top: auto;
+  padding: 2rem 0;
+  width: 100%;
+}
+
+/* Fix any luxy.js height issues */
+@media (max-width: 768px) {
+  body {
+    height: auto !important;
+    min-height: 100vh !important;
+  }
+}
+
+/* ===== VIDEO CONTAINER STYLES ===== */
+.video-container {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  margin-bottom: clamp(1rem, 3vw, 1.5rem);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  background: #000;
+}
+
+.video-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 12px;
 }

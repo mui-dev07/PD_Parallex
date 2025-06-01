@@ -1,47 +1,61 @@
-// ===== CUSTOM SCROLL INDICATOR ===== 
+// ===== OPTIMIZED SCROLL INDICATOR ===== 
 document.addEventListener('DOMContentLoaded', function() {
     const scrollIndicator = document.querySelector('.scroll-indicator');
     
     if (!scrollIndicator) return;
     
-    // Update scroll progress
+    // Performance detection
+    const isLowEndDevice = (() => {
+        const ram = navigator.deviceMemory || 4;
+        const cores = navigator.hardwareConcurrency || 4;
+        return ram < 4 || cores < 4 || window.innerWidth <= 768;
+    })();
+    
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    
+    // Throttle variables
+    let ticking = false;
+    let lastKnownScrollPosition = 0;
+    
+    // Update scroll progress with better performance
     function updateScrollProgress() {
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-        const scrollProgress = (scrollTop / scrollHeight) * 100;
         
-        // Update CSS custom property for scroll progress
+        // Only update if scroll position changed significantly
+        if (Math.abs(scrollTop - lastKnownScrollPosition) < 2) {
+            ticking = false;
+            return;
+        }
+        
+        lastKnownScrollPosition = scrollTop;
+        const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollProgress = Math.min((scrollTop / scrollHeight) * 100, 100);
+        
+        // Use CSS custom property for better performance
         document.documentElement.style.setProperty('--scroll-progress', `${scrollProgress}%`);
         
-        // Add glow effect when scrolling
-        if (scrollProgress > 0) {
-            scrollIndicator.style.opacity = '1';
-        } else {
-            scrollIndicator.style.opacity = '0.7';
-        }
+        // Simplified opacity logic
+        scrollIndicator.style.opacity = scrollProgress > 0 ? '1' : '0.7';
+        
+        ticking = false;
     }
     
-    // Throttle scroll events for better performance
-    let ticking = false;
-    function requestTick() {
+    // Optimized scroll handler
+    function handleScroll() {
         if (!ticking) {
+            // Use requestAnimationFrame for smooth performance
             requestAnimationFrame(updateScrollProgress);
             ticking = true;
         }
     }
     
-    function handleScroll() {
-        ticking = false;
-        requestTick();
-    }
-    
-    // Add scroll event listener
+    // Add scroll event listener with passive option for better performance
     window.addEventListener('scroll', handleScroll, { passive: true });
     
     // Initialize on load
     updateScrollProgress();
     
-    // Smooth scroll to top functionality
+    // Optimized scroll to top functionality
     function createScrollToTop() {
         const scrollToTopBtn = document.createElement('div');
         scrollToTopBtn.className = 'scroll-to-top';
@@ -53,25 +67,54 @@ document.addEventListener('DOMContentLoaded', function() {
         
         document.body.appendChild(scrollToTopBtn);
         
-        // Show/hide scroll to top button
+        let isVisible = false;
+        
+        // Show/hide scroll to top button with throttling
         function toggleScrollToTop() {
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            if (scrollTop > 500) {
-                scrollToTopBtn.classList.add('visible');
-            } else {
-                scrollToTopBtn.classList.remove('visible');
+            const shouldShow = scrollTop > 500;
+            
+            if (shouldShow !== isVisible) {
+                isVisible = shouldShow;
+                scrollToTopBtn.classList.toggle('visible', shouldShow);
             }
         }
         
-        // Scroll to top functionality
+        // Optimized scroll to top functionality
         scrollToTopBtn.addEventListener('click', function() {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+            // Use native smooth scrolling if supported, fallback to manual animation
+            if ('scrollBehavior' in document.documentElement.style) {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            } else {
+                // Fallback smooth scroll for older browsers
+                const scrollStep = -window.scrollY / (300 / 15);
+                const scrollInterval = setInterval(function(){
+                    if (window.scrollY !== 0) {
+                        window.scrollBy(0, scrollStep);
+                    } else {
+                        clearInterval(scrollInterval);
+                    }
+                }, 15);
+            }
         });
         
-        window.addEventListener('scroll', toggleScrollToTop, { passive: true });
+        // Throttled scroll listener for button visibility
+        let buttonTicking = false;
+        function handleButtonScroll() {
+            if (!buttonTicking) {
+                requestAnimationFrame(toggleScrollToTop);
+                buttonTicking = true;
+            }
+        }
+        
+        window.addEventListener('scroll', () => {
+            buttonTicking = false;
+            handleButtonScroll();
+        }, { passive: true });
+        
         toggleScrollToTop(); // Initialize
     }
     
@@ -88,54 +131,91 @@ document.addEventListener('DOMContentLoaded', function() {
                 const elementPosition = target.getBoundingClientRect().top;
                 const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
                 
-                window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
-                });
+                // Use native smooth scrolling if supported
+                if ('scrollBehavior' in document.documentElement.style) {
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                } else {
+                    // Fallback for older browsers
+                    const startPosition = window.pageYOffset;
+                    const distance = offsetPosition - startPosition;
+                    const duration = 800;
+                    let start = null;
+                    
+                    function animation(currentTime) {
+                        if (start === null) start = currentTime;
+                        const timeElapsed = currentTime - start;
+                        const run = ease(timeElapsed, startPosition, distance, duration);
+                        window.scrollTo(0, run);
+                        if (timeElapsed < duration) requestAnimationFrame(animation);
+                    }
+                    
+                    function ease(t, b, c, d) {
+                        t /= d / 2;
+                        if (t < 1) return c / 2 * t * t + b;
+                        t--;
+                        return -c / 2 * (t * (t - 2) - 1) + b;
+                    }
+                    
+                    requestAnimationFrame(animation);
+                }
             }
         });
     });
 });
 
-// ===== CUSTOM SCROLLBAR ENHANCEMENTS =====
+// ===== OPTIMIZED PARALLAX SCROLLING =====
 document.addEventListener('DOMContentLoaded', function() {
-    // Add custom scrollbar hover effects for different sections
-    const sections = document.querySelectorAll('section, .header, .footer');
+    // Skip heavy animations on low-end devices or reduced motion preference
+    const isLowEndDevice = (() => {
+        const ram = navigator.deviceMemory || 4;
+        const cores = navigator.hardwareConcurrency || 4;
+        return ram < 4 || cores < 4 || window.innerWidth <= 768;
+    })();
     
-    sections.forEach(section => {
-        section.addEventListener('mouseenter', function() {
-            this.style.setProperty('--scrollbar-hover', '1');
-        });
-        
-        section.addEventListener('mouseleave', function() {
-            this.style.setProperty('--scrollbar-hover', '0');
-        });
-    });
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     
-    // Parallax scrolling effect for background elements
+    if (isLowEndDevice || prefersReducedMotion) {
+        return; // Skip parallax on low-end devices or reduced motion
+    }
+    
+    // Optimized parallax scrolling for background elements
+    const parallaxElements = document.querySelectorAll('.floating-shapes .shape');
+    
+    if (!parallaxElements.length) return;
+    
+    let parallaxTicking = false;
+    let lastScrollPosition = 0;
+    
     function handleParallaxScroll() {
         const scrolled = window.pageYOffset;
-        const parallaxElements = document.querySelectorAll('.floating-shapes .shape');
         
+        // Only update if scroll changed significantly
+        if (Math.abs(scrolled - lastScrollPosition) < 5) {
+            parallaxTicking = false;
+            return;
+        }
+        
+        lastScrollPosition = scrolled;
+        
+        // Use transform3d for better performance
         parallaxElements.forEach((element, index) => {
-            const speed = 0.5 + (index * 0.1);
+            const speed = 0.3 + (index * 0.1); // Reduced speed for better performance
             const yPos = -(scrolled * speed);
             element.style.transform = `translate3d(0, ${yPos}px, 0)`;
         });
+        
+        parallaxTicking = false;
     }
     
-    // Throttled parallax scroll
-    let parallaxTicking = false;
-    function requestParallaxTick() {
+    // Throttled parallax scroll handler
+    function handleParallaxScrollEvent() {
         if (!parallaxTicking) {
             requestAnimationFrame(handleParallaxScroll);
             parallaxTicking = true;
         }
-    }
-    
-    function handleParallaxScrollEvent() {
-        parallaxTicking = false;
-        requestParallaxTick();
     }
     
     window.addEventListener('scroll', handleParallaxScrollEvent, { passive: true });
