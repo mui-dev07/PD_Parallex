@@ -1,3 +1,150 @@
+// ===== CUSTOM SITE LOADER =====
+function initSiteLoader() {
+  console.log('🔧 Loader initialization starting...');
+  
+  // Check if loader should be displayed
+  const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  
+  // Check for force show option first
+  const forceShow = typeof LOADER_CONFIG !== 'undefined' && LOADER_CONFIG.forceShow === true;
+  
+  const shouldShowLoader = forceShow || (typeof LOADER_CONFIG !== 'undefined' 
+    ? (isDevelopment ? LOADER_CONFIG.showInDevelopment : LOADER_CONFIG.enabled)
+    : true); // Default to true if config not found
+
+  const siteLoader = document.getElementById('siteLoader');
+  const mainContent = document.getElementById('mainContent');
+  const progressBar = document.getElementById('progressBar');
+  const progressPercentage = document.getElementById('progressPercentage');
+
+  console.log('🔍 Debug Info:');
+  console.log('  - Environment:', isDevelopment ? 'Development' : 'Production');
+  console.log('  - Hostname:', window.location.hostname);
+  console.log('  - Force Show:', forceShow);
+  console.log('  - Should Show Loader:', shouldShowLoader);
+  console.log('  - Loader Element Found:', !!siteLoader);
+  console.log('  - Main Content Found:', !!mainContent);
+
+  if (!shouldShowLoader) {
+    console.log('❌ Loader disabled - showing content immediately');
+    // Skip loader - show content immediately
+    if (siteLoader) siteLoader.style.display = 'none';
+    if (mainContent) {
+      mainContent.style.opacity = '1';
+      mainContent.style.pointerEvents = 'auto';
+    }
+    return;
+  }
+
+  console.log('✅ Loader enabled - starting animation');
+
+  // Ensure loader is visible
+  if (siteLoader) {
+    siteLoader.style.display = 'flex';
+    siteLoader.style.opacity = '1';
+    siteLoader.style.visibility = 'visible';
+  }
+
+  // Ensure main content is hidden
+  if (mainContent) {
+    mainContent.style.opacity = '0';
+    mainContent.style.pointerEvents = 'none';
+  }
+
+  // Loader duration from config or default 5 seconds
+  const loaderDuration = (typeof LOADER_CONFIG !== 'undefined' && LOADER_CONFIG.duration) 
+    ? LOADER_CONFIG.duration 
+    : 5000;
+
+  let progress = 0;
+  const progressInterval = 50; // Update every 50ms
+  const progressIncrement = (100 / (loaderDuration / progressInterval));
+  let hasCompleted = false;
+
+  // Function to complete loading and show main content
+  function completeLoading() {
+    if (hasCompleted) return; // Prevent multiple calls
+    hasCompleted = true;
+
+    console.log('🎯 Loader completing...'); // Debug log
+
+    // Add fade-out class to loader
+    if (siteLoader) {
+      siteLoader.classList.add('fade-out');
+    }
+
+    // Show main content with fade-in animation
+    if (mainContent) {
+      setTimeout(() => {
+        mainContent.style.opacity = '1';
+        mainContent.style.pointerEvents = 'auto';
+        
+        // Remove loader from DOM after animation completes
+        setTimeout(() => {
+          if (siteLoader) {
+            siteLoader.remove();
+          }
+        }, 800); // Match CSS transition duration
+      }, 200);
+    }
+  }
+
+  // Start progress animation
+  const progressTimer = setInterval(() => {
+    progress += progressIncrement;
+    
+    if (progress >= 100) {
+      progress = 100;
+      clearInterval(progressTimer);
+      
+      // Complete loading after reaching 100%
+      setTimeout(() => {
+        completeLoading();
+      }, 200);
+    }
+    
+    // Update progress bar and percentage
+    if (progressBar) {
+      progressBar.style.width = progress + '%';
+    }
+    if (progressPercentage) {
+      progressPercentage.textContent = Math.floor(progress) + '%';
+    }
+  }, progressInterval);
+
+  // Preload critical images to improve perceived performance
+  function preloadImages() {
+    const criticalImages = [
+      'img/1.jpg', // Hero image
+      'img/2.jpg', // About image
+      'img/3.jpg', 'img/4.jpg', 'img/5.jpg', 'img/6.jpg' // Portfolio images
+    ];
+
+    criticalImages.forEach(src => {
+      const img = new Image();
+      img.src = src;
+    });
+  }
+
+  // Start preloading images
+  preloadImages();
+
+  // Force minimum display time - this ensures the loader shows for the full duration
+  setTimeout(() => {
+    if (!hasCompleted) {
+      console.log('🕒 Minimum time reached, loader still running...'); // Debug log
+    }
+  }, loaderDuration);
+
+  // Debug logging
+  console.log('🚀 Loader initialized with duration:', loaderDuration + 'ms');
+  console.log('🏠 Environment:', isDevelopment ? 'Development' : 'Production');
+  console.log('👁️ Show loader:', shouldShowLoader);
+}
+
+// Initialize loader immediately when script loads
+initSiteLoader();
+
 document.addEventListener("DOMContentLoaded", function () {
   "use strict";
 

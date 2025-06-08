@@ -1870,408 +1870,469 @@ body.menu-open {
   border-color: var(--primary-white);
 }
 
-/* ===== RESPONSIVE DESIGN ===== */
-@media (max-width: 1200px) {
-  .content {
-    padding: 0 40px;
+/* ===== CUSTOM SITE LOADER ===== */
+.site-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-black);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+  pointer-events: auto;
+}
+
+.site-loader.fade-out {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Loader Background - Similar to main galaxy */
+.loader-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    ellipse at center,
+    var(--soft-black) 0%,
+    var(--primary-black) 70%
+  );
+  overflow: hidden;
+}
+
+.loader-stars {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+}
+
+.loader-stars::before,
+.loader-stars::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+}
+
+.loader-stars::before {
+  background-image: radial-gradient(
+      1px 1px at 25% 30%,
+      var(--primary-white),
+      transparent
+    ),
+    radial-gradient(1px 1px at 70% 20%, var(--primary-white), transparent),
+    radial-gradient(1px 1px at 20% 80%, var(--primary-white), transparent),
+    radial-gradient(1px 1px at 80% 60%, var(--primary-white), transparent),
+    radial-gradient(1px 1px at 15% 50%, var(--primary-white), transparent);
+  background-repeat: repeat;
+  background-size: 200px 150px;
+  animation: loaderTwinkle 3s linear infinite;
+}
+
+.loader-stars::after {
+  background-image: radial-gradient(
+      1px 1px at 60% 40%,
+      var(--primary-white),
+      transparent
+    ),
+    radial-gradient(1px 1px at 30% 70%, var(--primary-white), transparent),
+    radial-gradient(1px 1px at 90% 30%, var(--primary-white), transparent),
+    radial-gradient(1px 1px at 40% 90%, var(--primary-white), transparent);
+  background-repeat: repeat;
+  background-size: 180px 120px;
+  animation: loaderTwinkle 4s linear infinite reverse;
+}
+
+.loader-moving-stars {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  background-image: radial-gradient(
+      2px 2px at 30% 40%,
+      rgba(255, 255, 255, 0.6),
+      transparent
+    ),
+    radial-gradient(1px 1px at 70% 80%, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(
+      1px 1px at 20% 20%,
+      rgba(255, 255, 255, 0.7),
+      transparent
+    );
+  background-repeat: repeat;
+  background-size: 250px 180px;
+  animation: loaderMovingStars 15s linear infinite;
+}
+
+/* Loader Content */
+.loader-content {
+  position: relative;
+  z-index: 10001;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+}
+
+/* Loader Logo */
+.loader-logo {
+  margin-bottom: 40px;
+  animation: logoFloat 3s ease-in-out infinite;
+}
+
+.logo-text {
+  font-family: var(--font-primary);
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary-white);
+  letter-spacing: 0.2em;
+  position: relative;
+  display: inline-block;
+  animation: logoGlow 2s ease-in-out infinite alternate;
+}
+
+.logo-line {
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--primary-white), transparent);
+  margin: 15px auto 0;
+  animation: lineExpand 2s ease-in-out infinite alternate;
+}
+
+/* Orbital Animation */
+.loader-animation {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 40px;
+}
+
+.orbit-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.orbit {
+  position: absolute;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.orbit-1 {
+  width: 60px;
+  height: 60px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: orbitRotate 3s linear infinite;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.orbit-2 {
+  width: 120px;
+  height: 120px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: orbitRotate 5s linear infinite reverse;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.orbit-3 {
+  width: 180px;
+  height: 180px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: orbitRotate 7s linear infinite;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.planet {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: var(--primary-white);
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: planetPulse 1.5s ease-in-out infinite alternate;
+}
+
+.orbit-2 .planet {
+  width: 6px;
+  height: 6px;
+  top: -3px;
+  animation-duration: 1.8s;
+}
+
+.orbit-3 .planet {
+  width: 4px;
+  height: 4px;
+  top: -2px;
+  animation-duration: 2.2s;
+}
+
+.center-core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  background: radial-gradient(circle, var(--primary-white), rgba(255, 255, 255, 0.3));
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 
+    0 0 20px rgba(255, 255, 255, 0.8),
+    0 0 40px rgba(255, 255, 255, 0.4),
+    0 0 60px rgba(255, 255, 255, 0.2);
+  animation: coreGlow 2s ease-in-out infinite alternate;
+}
+
+/* Loading Text */
+.loader-text {
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
+.loading-word {
+  font-family: var(--font-secondary);
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: var(--primary-white);
+  letter-spacing: 0.1em;
+  opacity: 0.8;
+}
+
+.loading-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  background: var(--primary-white);
+  border-radius: 50%;
+  animation: dotBounce 1.4s ease-in-out infinite;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* Progress Bar */
+.loader-progress {
+  position: relative;
+}
+
+.progress-bar-bg {
+  width: 100%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 1px;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-white), rgba(255, 255, 255, 0.8), var(--primary-white));
+  width: 0%;
+  border-radius: 1px;
+  transition: width 0.1s ease;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.progress-percentage {
+  font-family: var(--font-secondary);
+  font-size: 0.9rem;
+  color: var(--primary-white);
+  opacity: 0.7;
+  letter-spacing: 0.05em;
+}
+
+/* Main Content Hidden State */
+.main-content {
+  transition: opacity 0.8s ease;
+}
+
+.main-content.loading {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Keyframe Animations */
+@keyframes loaderTwinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+@keyframes loaderMovingStars {
+  0% { transform: translateX(0) translateY(0); }
+  100% { transform: translateX(-100px) translateY(-50px); }
+}
+
+@keyframes logoFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes logoGlow {
+  0% { 
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
   }
-  
-  .navbar {
-    width: 700px;
-    max-width: 70%;
-  }
-  
-  .nav-menu {
-    gap: 30px;
-  }
-  
-  .nav-link {
-    font-size: 15px;
-    padding: 8px 14px;
-  }
-  
-  .hero {
-    margin-left: 20px;
-    margin-right: 20px;
-  }
-  
-  .hero-container {
-    gap: 50px;
-  }
-  
-  .about-container {
-    gap: 60px;
-  }
-  
-  .footer-container {
-    gap: 40px;
-  }
-  
-  .testimonials-grid {
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-  }
-  
-  .hire-features {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 25px;
+  100% { 
+    text-shadow: 
+      0 0 20px rgba(255, 255, 255, 0.6),
+      0 0 30px rgba(255, 255, 255, 0.4),
+      0 0 40px rgba(255, 255, 255, 0.2);
   }
 }
 
-@media (max-width: 991px) {
-  .navbar {
-    display: none;
+@keyframes lineExpand {
+  0% { 
+    width: 60px;
+    opacity: 0.5;
   }
-  
-  .hamburger {
-    display: flex;
+  100% { 
+    width: 120px;
+    opacity: 1;
   }
-  
-  .hero {
-    margin-left: 20px;
-    margin-right: 20px;
-  }
-  
-  .hero-container {
-    grid-template-columns: 1fr;
-    gap: 40px;
-    text-align: center;
-  }
-  
-  .hero-image {
-    order: -1;
-    height: 50vh;
-    min-height: 350px;
-  }
-  
-  .about-container {
-    grid-template-columns: 1fr;
-    gap: 40px;
-  }
-  
-  .about-content .section-title {
-    text-align: center;
-  }
-  
-  .footer-container {
-    grid-template-columns: 1fr;
-    gap: 40px;
-    text-align: center;
-  }
-  
-  .footer-social {
-    align-items: center;
-  }
-  
-  .modal-body {
-    grid-template-columns: 1fr;
-  }
-  
-  .modal-image {
-    height: 250px;
-  }
-  
-  .testimonials-grid {
-    grid-template-columns: 1fr;
-    gap: 30px;
-  }
-  
-  .hire-features {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-  }
-  
-  .hire-cta {
-    flex-direction: column;
-    align-items: center;
-  }
+}
 
-  .scroll-to-top {
-    bottom: 20px;
-    right: 20px;
+@keyframes orbitRotate {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes planetPulse {
+  0% { 
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    transform: translateX(-50%) scale(1);
+  }
+  100% { 
+    box-shadow: 0 0 20px rgba(255, 255, 255, 1);
+    transform: translateX(-50%) scale(1.2);
+  }
+}
+
+@keyframes coreGlow {
+  0% { 
+    box-shadow: 
+      0 0 20px rgba(255, 255, 255, 0.8),
+      0 0 40px rgba(255, 255, 255, 0.4),
+      0 0 60px rgba(255, 255, 255, 0.2);
+  }
+  100% { 
+    box-shadow: 
+      0 0 30px rgba(255, 255, 255, 1),
+      0 0 60px rgba(255, 255, 255, 0.6),
+      0 0 90px rgba(255, 255, 255, 0.3);
+  }
+}
+
+@keyframes dotBounce {
+  0%, 80%, 100% { 
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  40% { 
+    transform: scale(1.3);
+    opacity: 1;
+  }
+}
+
+/* Responsive Design for Loader */
+@media (max-width: 768px) {
+  .loader-content {
+    max-width: 300px;
+  }
+  
+  .logo-text {
+    font-size: 2rem;
+  }
+  
+  .loader-animation {
+    width: 150px;
+    height: 150px;
+  }
+  
+  .orbit-1 {
     width: 45px;
     height: 45px;
   }
-
-  .scroll-nav-popup {
-    bottom: 70px;
-    right: 20px;
+  
+  .orbit-2 {
+    width: 90px;
+    height: 90px;
   }
-}
-
-@media (max-width: 768px) {
-  :root {
-    --section-padding: 80px 0;
-    --navbar-height: 40px;
+  
+  .orbit-3 {
+    width: 135px;
+    height: 135px;
   }
-
-  body {
-    padding-top: calc(var(--navbar-height) + 20px);
-  }
-
-  .hamburger {
-    top: 15px;
-    left: 15px;
-    padding: 10px;
-  }
-
-  .hamburger .bar {
-    width: 22px;
-  }
-
-  .sidebar {
-    width: 280px;
-    padding: 70px 25px 25px;
-  }
-
-  .nav-menu {
-    gap: 15px;
-  }
-
-  .nav-link {
-    font-size: 13px;
-    padding: 6px 10px;
-  }
-
-  .content {
-    padding: 0 20px;
-  }
-
-  .hero {
-    margin-left: 10px;
-    margin-right: 10px;
-  }
-
-  .hero-container {
-    gap: 30px;
-  }
-
-  .hero-image {
-    height: 45vh;
-    min-height: 300px;
-  }
-
-  .portfolio-grid {
-    grid-template-columns: 1fr;
-    gap: 30px;
-  }
-
-  .skills-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .slider-container {
-    height: auto;
-    min-height: 250px;
-    padding: 20px;
-  }
-
-  .slide-content {
-    flex-direction: column;
-    text-align: center;
-    gap: 15px;
-  }
-
-  .slide-number {
-    font-size: 1.5rem;
-    min-width: auto;
-  }
-
-  .slider-controls {
-    margin-top: 20px;
-  }
-
-  .testimonials-grid {
-    gap: 25px;
-  }
-
-  .testimonial-card {
-    padding: 25px;
-  }
-
-  .hire-features {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-
-  .hire-btn {
-    min-width: 160px;
-    padding: 15px 30px;
-    font-size: 14px;
-  }
-
-  .portfolio-section,
-  .about-section,
-  .experience-section,
-  .testimonials-section,
-  .hire-section {
-    margin-top: 60px;
-    margin-bottom: 60px;
-  }
-
-  .scroll-to-top {
-    width: 40px;
-    height: 40px;
-    bottom: 15px;
-    right: 15px;
-  }
-
-  .scroll-to-top::before {
-    font-size: 16px;
-  }
-
-  .scroll-tooltip {
-    bottom: 50px;
-    right: -10px;
-    font-size: 11px;
-    padding: 6px 10px;
-    max-width: 180px;
-    text-align: center;
-  }
-
-  .scroll-tooltip::before {
-    right: 15px;
-  }
-
-  .scroll-nav-popup {
-    bottom: 60px;
-    right: 15px;
-    padding: 10px;
-  }
-
-  .scroll-nav-popup .nav-link {
-    font-size: 12px;
-    padding: 6px 10px;
+  
+  .center-core {
+    width: 15px;
+    height: 15px;
   }
 }
 
 @media (max-width: 480px) {
-  .hero-title {
-    font-size: 2.5rem;
+  .logo-text {
+    font-size: 1.5rem;
+    letter-spacing: 0.15em;
   }
-
-  .section-title {
-    font-size: 2.5rem;
+  
+  .loader-animation {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 30px;
   }
-
-  .hero-subtitle {
-    font-size: 16px;
-  }
-
-  .modal-info {
-    padding: 20px;
-  }
-
-  .modal-links {
-    flex-direction: column;
-  }
-
-  .contact-link {
-    font-size: 18px;
-  }
-
-  .footer-title {
-    font-size: 2rem;
-  }
-
-  .hamburger {
-    top: 12px;
-    left: 12px;
-    padding: 8px;
-  }
-
-  .hamburger .bar {
-    width: 20px;
-  }
-
-  .sidebar {
-    width: 260px;
-    padding: 60px 20px 20px;
-  }
-
-  .sidebar-nav .nav-link {
-    font-size: 16px;
-    padding: 12px 16px;
-  }
-
-  .hero {
-    margin-left: 5px;
-    margin-right: 5px;
-  }
-
-  .hero-container {
-    gap: 25px;
-  }
-
-  .hero-image {
-    height: 40vh;
-    min-height: 250px;
-  }
-
-  .testimonial-card {
-    padding: 20px;
-  }
-
-  .testimonial-quote {
-    font-size: 16px;
-  }
-
-  .hire-title {
-    font-size: 2.5rem;
-  }
-
-  .hire-subtitle {
-    font-size: 18px;
-    margin-bottom: 40px;
-  }
-
-  .hire-btn {
-    min-width: 140px;
-    padding: 12px 24px;
-    font-size: 13px;
-  }
-
-  .portfolio-section,
-  .about-section,
-  .experience-section,
-  .testimonials-section,
-  .hire-section {
-    margin-top: 80px;
-    margin-bottom: 40px;
-  }
-
-  .scroll-to-top {
+  
+  .orbit-1 {
     width: 35px;
     height: 35px;
-    bottom: 10px;
-    right: 10px;
   }
-
-  .scroll-to-top::before {
-    font-size: 14px;
+  
+  .orbit-2 {
+    width: 70px;
+    height: 70px;
   }
-
-  .scroll-tooltip {
-    bottom: 45px;
-    right: -15px;
-    font-size: 10px;
-    padding: 5px 8px;
-    max-width: 160px;
-    text-align: center;
+  
+  .orbit-3 {
+    width: 105px;
+    height: 105px;
   }
-
-  .scroll-tooltip::before {
-    right: 12px;
+  
+  .loading-word {
+    font-size: 1rem;
   }
-
-  .scroll-nav-popup {
-    bottom: 50px;
-    right: 10px;
-    padding: 8px;
-  }
-
-  .scroll-nav-popup .nav-link {
-    font-size: 12px;
-    padding: 6px 10px;
+  
+  .progress-percentage {
+    font-size: 0.8rem;
   }
 }
