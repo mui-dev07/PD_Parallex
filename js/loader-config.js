@@ -8,16 +8,16 @@ const LOADER_CONFIG = {
   enabled: true, 
   
   // Loader duration in milliseconds (5000 = 5 seconds)
-  duration: 5000,
+  duration: 5000, // Back to 5 seconds for production
   
   // Show loader even in development environment (localhost)
   // Set to true if you want to test the loader locally
-  showInDevelopment: true,
+  showInDevelopment: true, // Keep true for testing
   
   // ===== DEBUG/TEST MODE =====
   
   // Force loader to show regardless of other settings (for debugging)
-  forceShow: true, // Temporary - set to false after testing
+  forceShow: false, // Disabled - animations are now working properly
   
   // ===== ADANCED SETTINGS =====
   
