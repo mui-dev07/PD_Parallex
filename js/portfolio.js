@@ -126,6 +126,7 @@ function initSiteLoader() {
       "img/mujtaba.png", // Hero image
       "img/2.jpg", // About image
       "img/content-gorilla.png",
+      "img/pod-gorilla.png",
       "img/4.jpg",
       "img/5.jpg",
       "img/6.jpg", // Portfolio images
@@ -646,12 +647,12 @@ document.addEventListener("DOMContentLoaded", function () {
         liveLink: "https://content-gorilla-salespage.netlify.app/", // Replace with actual link
       },
       2: {
-        title: "Portfolio Website",
+        title: "Pod Gorilla",
         description:
-          "A modern, responsive portfolio website showcasing creative work and projects. Built with Vue.js and enhanced with GSAP animations and Three.js for interactive 3D elements. Features smooth scrolling, parallax effects, and optimized performance.",
-        image: "img/4.jpg",
-        tech: ["Vue.js", "GSAP", "Three.js", "SCSS", "Webpack", "PWA"],
-        liveLink: "#", // Add your portfolio link here
+          "A modern, responsive waitlist page showcasing creative work and projects. Built with JavaScript and enhanced with GSAP animations and Three.js for interactive 3D elements. Features smooth scrolling, parallax effects, and optimized performance.",
+        image: "img/pod-gorilla.png",
+        tech: ["JavaScript", "CSS", "GSAP"],
+        liveLink: "https://podgorilla-waitlist.netlify.app/", // Add your portfolio link here
       },
       3: {
         title: "Mobile App Design",
