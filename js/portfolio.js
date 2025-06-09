@@ -127,8 +127,8 @@ function initSiteLoader() {
       "img/2.jpg", // About image
       "img/content-gorilla.png",
       "img/pod-gorilla.png",
-      "img/4.jpg",
-      "img/5.jpg",
+      "img/merge-mate.png",
+      "img/ruh-al-jannah.png",
       "img/6.jpg", // Portfolio images
     ];
 
@@ -655,27 +655,28 @@ document.addEventListener("DOMContentLoaded", function () {
         liveLink: "https://podgorilla-waitlist.netlify.app/", // Add your portfolio link here
       },
       3: {
-        title: "Mobile App Design",
+        title: "Merge Mate",
         description:
-          "A cross-platform mobile application for social networking and content sharing. Developed with React Native and integrated with Firebase for real-time data synchronization, user authentication, and cloud storage.",
-        image: "img/5.jpg",
-        tech: ["React Native", "Firebase", "Redux", "Expo", "AsyncStorage"],
-        liveLink: "#", // Add your app link here
+          "A Project Management Tool built with React and Bootstrap. Features a modern UI/UX design, responsive layout, and optimized performance. Delivered exceptional results for client's business growth with clean, efficient code architecture.",
+        image: "img/merge-mate.png",
+        tech: ["React", "Bootstrap", "Tailwind CSS"],
+        liveLink: "https://mergemate.netlify.app/", // Add your app link here
       },
       4: {
-        title: "Dashboard Analytics",
+        title: "Ruh Al Jannah",
         description:
-          "A comprehensive analytics dashboard for business intelligence and data visualization. Built with Angular and D3.js, featuring interactive charts, real-time data updates, and customizable widgets for monitoring KPIs.",
-        image: "img/6.jpg",
-        tech: [
-          "Angular",
-          "D3.js",
-          "TypeScript",
-          "RxJS",
-          "Chart.js",
-          "Material UI",
-        ],
-        liveLink: "#", // Add your dashboard link here
+          "Ruh Al Jannah is a website for a company that sells erotic perfumes and atars. It is built with React and Tailwind CSS. It is a responsive website that is optimized for mobile and desktop devices.",
+        image: "img/ruh-al-jannah.png",
+        tech: ["React", "Tailwind CSS", "PHP"],
+        liveLink: "http://ruhaljannah.com/", // Add your dashboard link here
+      },
+      5: {
+        title: "Tasty Burgers",
+        description:
+          "Tasty Burgers is a website for a company that sells burgers. It is built with React and Bootstrap. It is a responsive website that is optimized for mobile and desktop devices.",
+        image: "img/tasty-burger.png",
+        tech: ["React", "Bootstrap"],
+        liveLink: "https://tasty-burger-site.netlify.app/", // Add your dashboard link here
       },
     };
 
