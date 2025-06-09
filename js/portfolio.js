@@ -115,7 +115,7 @@ function initSiteLoader() {
   // Preload critical images to improve perceived performance
   function preloadImages() {
     const criticalImages = [
-      'img/1.jpg', // Hero image
+      'img/mujtaba.png', // Hero image
       'img/2.jpg', // About image
       'img/3.jpg', 'img/4.jpg', 'img/5.jpg', 'img/6.jpg' // Portfolio images
     ];
@@ -907,23 +907,82 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // Scroll to top functionality
+    // Scroll to top functionality with proper single/double click detection
     if (scrollToTop) {
-        scrollToTop.addEventListener("click", () => {
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
-        });
-
-        // Double click to show navigation popup
-        scrollToTop.addEventListener("dblclick", () => {
-            scrollNavPopup.classList.toggle("active");
+        let clickCount = 0;
+        let clickTimer = null;
+        const clickDelay = 300; // 300ms to detect double click
+        
+        function handleScrollToTopClick(e) {
+            e.preventDefault();
+            clickCount++;
             
-            // Hide popup after 3 seconds
-            setTimeout(() => {
-                scrollNavPopup.classList.remove("active");
-            }, 3000);
+            if (clickCount === 1) {
+                clickTimer = setTimeout(() => {
+                    // Single click - scroll to top
+                    window.scrollTo({
+                        top: 0,
+                        behavior: "smooth"
+                    });
+                    clickCount = 0;
+                }, clickDelay);
+            } else if (clickCount === 2) {
+                // Double click - show navigation popup
+                clearTimeout(clickTimer);
+                scrollNavPopup.classList.toggle("active");
+                
+                // Hide popup after 3 seconds
+                setTimeout(() => {
+                    scrollNavPopup.classList.remove("active");
+                }, 3000);
+                
+                clickCount = 0;
+            }
+        }
+        
+        // Handle both mouse clicks and touch events
+        scrollToTop.addEventListener("click", handleScrollToTopClick);
+        
+        // Touch events for mobile devices
+        let touchStartTime = 0;
+        let touchCount = 0;
+        let touchTimer = null;
+        
+        scrollToTop.addEventListener("touchstart", (e) => {
+            e.preventDefault();
+            touchStartTime = Date.now();
+        });
+        
+        scrollToTop.addEventListener("touchend", (e) => {
+            e.preventDefault();
+            const touchDuration = Date.now() - touchStartTime;
+            
+            // Only process quick taps (not long presses)
+            if (touchDuration < 200) {
+                touchCount++;
+                
+                if (touchCount === 1) {
+                    touchTimer = setTimeout(() => {
+                        // Single tap - scroll to top
+                        window.scrollTo({
+                            top: 0,
+                            behavior: "smooth"
+                        });
+                        touchCount = 0;
+                    }, clickDelay);
+                } else if (touchCount === 2) {
+                    // Double tap - show navigation popup
+                    clearTimeout(touchTimer);
+                    scrollNavPopup.classList.toggle("active");
+                    
+                    // Hide popup after 3 seconds
+                    setTimeout(() => {
+                        scrollNavPopup.classList.remove("active");
+                    }, 3000);
+                    
+                    touchCount = 0;
+                }
+            }
         });
     }
 
@@ -1128,6 +1187,48 @@ document.addEventListener("DOMContentLoaded", function () {
     };
   }
 
+  // ===== HERO IMAGE MODAL =====
+  function initHeroImageModal() {
+    const heroImage = document.querySelector('.hero-image .image-container');
+    const heroImageModal = document.getElementById('heroImageModal');
+    const heroModalClose = document.getElementById('heroModalClose');
+    const modalOverlay = heroImageModal ? heroImageModal.querySelector('.modal-overlay') : null;
+
+    if (!heroImage || !heroImageModal) return;
+
+    function openHeroModal() {
+      heroImageModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+
+      // GSAP animation for modal content
+      if (typeof gsap !== 'undefined') {
+        gsap.from('.hero-modal-content', {
+          duration: 0.4,
+          scale: 0.8,
+          opacity: 0,
+          ease: 'back.out(1.7)',
+        });
+      }
+    }
+
+    function closeHeroModal() {
+      heroImageModal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+
+    // Event listeners
+    heroImage.addEventListener('click', openHeroModal);
+    if (heroModalClose) heroModalClose.addEventListener('click', closeHeroModal);
+    if (modalOverlay) modalOverlay.addEventListener('click', closeHeroModal);
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && heroImageModal.classList.contains('active')) {
+        closeHeroModal();
+      }
+    });
+  }
+
   // ===== INITIALIZE ALL FUNCTIONS =====
   function init() {
     try {
@@ -1142,6 +1243,7 @@ document.addEventListener("DOMContentLoaded", function () {
       initFooterAnimations();
       initExperienceSlider();
       initProjectModal();
+      initHeroImageModal();
       initSmoothScroll();
       initCTAButtons();
       initPerformanceOptimizations();

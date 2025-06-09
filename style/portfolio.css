@@ -916,6 +916,7 @@ body.menu-open {
   height: 70vh;
   min-height: 600px;
   will-change: transform;
+  cursor: pointer;
 }
 
 .image-container {
@@ -924,18 +925,27 @@ body.menu-open {
   height: 100%;
   border-radius: var(--border-radius);
   overflow: hidden;
-  border: 1px solid var(--glass-border);
-  background: var(--glass-bg);
-  backdrop-filter: blur(10px);
-  clip-path: polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%);
+  border: none;
+  background: transparent;
+  backdrop-filter: none;
+  transition: var(--transition);
 }
 
 .image-container img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center top;
   transition: var(--transition);
   will-change: transform;
+}
+
+/* Ensure image shows properly on desktop */
+@media (min-width: 992px) {
+  .image-container img {
+    object-fit: cover;
+    object-position: center top;
+  }
 }
 
 .image-overlay {
@@ -948,12 +958,56 @@ body.menu-open {
   transition: var(--transition);
 }
 
+.image-container:hover {
+  box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
+  transform: translateY(-5px);
+}
+
 .image-container:hover img {
   transform: scale(1.05);
 }
 
 .image-container:hover .image-overlay {
-  background: linear-gradient(45deg, rgba(0, 0, 0, 0.1), transparent);
+  background: linear-gradient(45deg, rgba(0, 0, 0, 0.3), transparent);
+}
+
+.image-container::after {
+  content: "Click to view";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: var(--primary-white);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-family: var(--font-secondary);
+  opacity: 0;
+  transition: var(--transition);
+  pointer-events: none;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 10;
+}
+
+.image-container:hover::after {
+  opacity: 1;
+}
+
+/* Responsive styles for click indicator */
+@media (max-width: 768px) {
+  .image-container::after {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .image-container::after {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
 }
 
 .scroll-indicator {
@@ -1008,8 +1062,10 @@ body.menu-open {
 /* ===== HERO RESPONSIVE STYLES ===== */
 @media (max-width: 1200px) {
   .hero {
-    margin-left: 20px;
-    margin-right: 20px;
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 20px;
+    padding-right: 20px;
   }
 
   .hero-container {
@@ -1024,9 +1080,9 @@ body.menu-open {
 
 @media (max-width: 991px) {
   .hero {
-    margin-left: 15px;
-    margin-right: 15px;
-    padding: 60px 0;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 60px 15px;
   }
 
   .hero-container {
@@ -1043,8 +1099,13 @@ body.menu-open {
     order: 1;
     height: 50vh;
     min-height: 400px;
-    max-width: 600px;
-    margin: 0 auto;
+    width: 100%;
+    margin: 0;
+  }
+
+  .image-container img {
+    object-fit: contain;
+    object-position: center;
   }
 
   .hero-title {
@@ -1063,9 +1124,9 @@ body.menu-open {
 
 @media (max-width: 768px) {
   .hero {
-    margin-left: 10px;
-    margin-right: 10px;
-    padding: 40px 0;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 40px 10px;
     min-height: 90vh;
   }
 
@@ -1076,6 +1137,11 @@ body.menu-open {
   .hero-image {
     height: 45vh;
     min-height: 350px;
+  }
+
+  .image-container img {
+    object-fit: contain;
+    object-position: center;
   }
 
   .hero-title {
@@ -1105,9 +1171,9 @@ body.menu-open {
 
 @media (max-width: 576px) {
   .hero {
-    margin-left: 5px;
-    margin-right: 5px;
-    padding: 30px 0;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 30px 5px;
     min-height: 85vh;
   }
 
@@ -1118,6 +1184,11 @@ body.menu-open {
   .hero-image {
     height: 40vh;
     min-height: 300px;
+  }
+
+  .image-container img {
+    object-fit: contain;
+    object-position: center;
   }
 
   .hero-title {
@@ -1157,6 +1228,11 @@ body.menu-open {
     min-height: 250px;
   }
 
+  .image-container img {
+    object-fit: contain;
+    object-position: center;
+  }
+
   .hero-title {
     font-size: clamp(1.6rem, 5vw, 2.5rem);
     margin-bottom: 10px;
@@ -1190,6 +1266,11 @@ body.menu-open {
   .hero-image {
     height: 30vh;
     min-height: 220px;
+  }
+
+  .image-container img {
+    object-fit: contain;
+    object-position: center;
   }
 
   .hero-title {
@@ -2738,6 +2819,125 @@ body.menu-open {
 
   .footer-bottom {
     padding-top: 15px;
+  }
+}
+
+/* ===== HERO IMAGE MODAL ===== */
+.hero-image-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: var(--transition);
+}
+
+.hero-image-modal.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.hero-modal-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  backdrop-filter: none;
+  overflow: visible;
+  transform: scale(0.8);
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-image-modal.active .hero-modal-content {
+  transform: scale(1);
+}
+
+.hero-modal-image {
+  position: relative;
+  max-width: 100%;
+  max-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-modal-image img {
+  max-width: 80vw;
+  max-height: 80vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 0;
+}
+
+/* For large and extra large devices - maintain original image size */
+@media (min-width: 1200px) {
+  .hero-modal-content {
+    max-width: none;
+    max-height: none;
+  }
+
+  .hero-modal-image img {
+    max-width: 600px;
+    max-height: 600px;
+    width: 600px;
+    height: 600px;
+    object-fit: cover;
+  }
+}
+
+@media (min-width: 1400px) {
+  .hero-modal-image img {
+    max-width: 700px;
+    max-height: 700px;
+    width: 700px;
+    height: 700px;
+  }
+}
+
+/* Hero Image Modal Responsive */
+@media (max-width: 991px) {
+  .hero-modal-content {
+    max-width: 95vw;
+    max-height: 95vh;
+  }
+
+  .hero-modal-image img {
+    max-width: 85vw;
+    max-height: 85vh;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-modal-content {
+    max-width: 98vw;
+    max-height: 98vh;
+    border-radius: 0;
+  }
+
+  .hero-modal-image img {
+    max-width: 90vw;
+    max-height: 90vh;
+    border-radius: 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .hero-modal-image img {
+    max-width: 95vw;
+    max-height: 95vh;
   }
 }
 
@@ -4949,7 +5149,7 @@ body.menu-open {
   }
 
   .footer-text {
-    font-size: 0.9rem;
+    font-size: 0.7rem;
   }
 }
 
