@@ -1,64 +1,72 @@
 // ===== CUSTOM SITE LOADER =====
 function initSiteLoader() {
-  console.log('🔧 Loader initialization starting...');
-  
+  console.log("🔧 Loader initialization starting...");
+
   // Check if loader should be displayed
-  const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-  
+  const isDevelopment =
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1";
+
   // Check for force show option first
-  const forceShow = typeof LOADER_CONFIG !== 'undefined' && LOADER_CONFIG.forceShow === true;
-  
-  const shouldShowLoader = forceShow || (typeof LOADER_CONFIG !== 'undefined' 
-    ? (isDevelopment ? LOADER_CONFIG.showInDevelopment : LOADER_CONFIG.enabled)
-    : true); // Default to true if config not found
+  const forceShow =
+    typeof LOADER_CONFIG !== "undefined" && LOADER_CONFIG.forceShow === true;
 
-  const siteLoader = document.getElementById('siteLoader');
-  const mainContent = document.getElementById('mainContent');
-  const progressBar = document.getElementById('progressBar');
-  const progressPercentage = document.getElementById('progressPercentage');
+  const shouldShowLoader =
+    forceShow ||
+    (typeof LOADER_CONFIG !== "undefined"
+      ? isDevelopment
+        ? LOADER_CONFIG.showInDevelopment
+        : LOADER_CONFIG.enabled
+      : true); // Default to true if config not found
 
-  console.log('🔍 Debug Info:');
-  console.log('  - Environment:', isDevelopment ? 'Development' : 'Production');
-  console.log('  - Hostname:', window.location.hostname);
-  console.log('  - Force Show:', forceShow);
-  console.log('  - Should Show Loader:', shouldShowLoader);
-  console.log('  - Loader Element Found:', !!siteLoader);
-  console.log('  - Main Content Found:', !!mainContent);
+  const siteLoader = document.getElementById("siteLoader");
+  const mainContent = document.getElementById("mainContent");
+  const progressBar = document.getElementById("progressBar");
+  const progressPercentage = document.getElementById("progressPercentage");
+
+  console.log("🔍 Debug Info:");
+  console.log("  - Environment:", isDevelopment ? "Development" : "Production");
+  console.log("  - Hostname:", window.location.hostname);
+  console.log("  - Force Show:", forceShow);
+  console.log("  - Should Show Loader:", shouldShowLoader);
+  console.log("  - Loader Element Found:", !!siteLoader);
+  console.log("  - Main Content Found:", !!mainContent);
 
   if (!shouldShowLoader) {
-    console.log('❌ Loader disabled - showing content immediately');
+    console.log("❌ Loader disabled - showing content immediately");
     // Skip loader - show content immediately
-    if (siteLoader) siteLoader.style.display = 'none';
+    if (siteLoader) siteLoader.style.display = "none";
     if (mainContent) {
-      mainContent.style.opacity = '1';
-      mainContent.style.pointerEvents = 'auto';
+      mainContent.style.opacity = "1";
+      mainContent.style.pointerEvents = "auto";
     }
     return;
   }
 
-  console.log('✅ Loader enabled - starting animation');
+  console.log("✅ Loader enabled - starting animation");
 
   // Ensure loader is visible
   if (siteLoader) {
-    siteLoader.style.display = 'flex';
-    siteLoader.style.opacity = '1';
-    siteLoader.style.visibility = 'visible';
+    siteLoader.style.display = "flex";
+    siteLoader.style.opacity = "1";
+    siteLoader.style.visibility = "visible";
   }
 
   // Ensure main content is hidden
   if (mainContent) {
-    mainContent.style.opacity = '0';
-    mainContent.style.pointerEvents = 'none';
+    mainContent.style.opacity = "0";
+    mainContent.style.pointerEvents = "none";
   }
 
   // Loader duration from config or default 5 seconds
-  const loaderDuration = (typeof LOADER_CONFIG !== 'undefined' && LOADER_CONFIG.duration) 
-    ? LOADER_CONFIG.duration 
-    : 5000;
+  const loaderDuration =
+    typeof LOADER_CONFIG !== "undefined" && LOADER_CONFIG.duration
+      ? LOADER_CONFIG.duration
+      : 5000;
 
   let progress = 0;
   const progressInterval = 50; // Update every 50ms
-  const progressIncrement = (100 / (loaderDuration / progressInterval));
+  const progressIncrement = 100 / (loaderDuration / progressInterval);
   let hasCompleted = false;
 
   // Function to complete loading and show main content
@@ -66,19 +74,19 @@ function initSiteLoader() {
     if (hasCompleted) return; // Prevent multiple calls
     hasCompleted = true;
 
-    console.log('🎯 Loader completing...'); // Debug log
+    console.log("🎯 Loader completing..."); // Debug log
 
     // Add fade-out class to loader
     if (siteLoader) {
-      siteLoader.classList.add('fade-out');
+      siteLoader.classList.add("fade-out");
     }
 
     // Show main content with fade-in animation
     if (mainContent) {
       setTimeout(() => {
-        mainContent.style.opacity = '1';
-        mainContent.style.pointerEvents = 'auto';
-        
+        mainContent.style.opacity = "1";
+        mainContent.style.pointerEvents = "auto";
+
         // Remove loader from DOM after animation completes
         setTimeout(() => {
           if (siteLoader) {
@@ -92,35 +100,38 @@ function initSiteLoader() {
   // Start progress animation
   const progressTimer = setInterval(() => {
     progress += progressIncrement;
-    
+
     if (progress >= 100) {
       progress = 100;
       clearInterval(progressTimer);
-      
+
       // Complete loading after reaching 100%
       setTimeout(() => {
         completeLoading();
       }, 200);
     }
-    
+
     // Update progress bar and percentage
     if (progressBar) {
-      progressBar.style.width = progress + '%';
+      progressBar.style.width = progress + "%";
     }
     if (progressPercentage) {
-      progressPercentage.textContent = Math.floor(progress) + '%';
+      progressPercentage.textContent = Math.floor(progress) + "%";
     }
   }, progressInterval);
 
   // Preload critical images to improve perceived performance
   function preloadImages() {
     const criticalImages = [
-      'img/mujtaba.png', // Hero image
-      'img/2.jpg', // About image
-      'img/3.jpg', 'img/4.jpg', 'img/5.jpg', 'img/6.jpg' // Portfolio images
+      "img/mujtaba.png", // Hero image
+      "img/2.jpg", // About image
+      "img/content-gorilla.png",
+      "img/4.jpg",
+      "img/5.jpg",
+      "img/6.jpg", // Portfolio images
     ];
 
-    criticalImages.forEach(src => {
+    criticalImages.forEach((src) => {
       const img = new Image();
       img.src = src;
     });
@@ -132,14 +143,14 @@ function initSiteLoader() {
   // Force minimum display time - this ensures the loader shows for the full duration
   setTimeout(() => {
     if (!hasCompleted) {
-      console.log('🕒 Minimum time reached, loader still running...'); // Debug log
+      console.log("🕒 Minimum time reached, loader still running..."); // Debug log
     }
   }, loaderDuration);
 
   // Debug logging
-  console.log('🚀 Loader initialized with duration:', loaderDuration + 'ms');
-  console.log('🏠 Environment:', isDevelopment ? 'Development' : 'Production');
-  console.log('👁️ Show loader:', shouldShowLoader);
+  console.log("🚀 Loader initialized with duration:", loaderDuration + "ms");
+  console.log("🏠 Environment:", isDevelopment ? "Development" : "Production");
+  console.log("👁️ Show loader:", shouldShowLoader);
 }
 
 // Initialize loader immediately when script loads
@@ -180,23 +191,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // ===== ACTIVE LINK HIGHLIGHTING =====
   function updateActiveLink() {
-    const sections = document.querySelectorAll('section[id]');
-    const navLinks = document.querySelectorAll('.nav-link');
-    
-    let current = '';
-    
-    sections.forEach(section => {
+    const sections = document.querySelectorAll("section[id]");
+    const navLinks = document.querySelectorAll(".nav-link");
+
+    let current = "";
+
+    sections.forEach((section) => {
       const sectionTop = section.offsetTop;
       const sectionHeight = section.clientHeight;
-      if (scrollY >= (sectionTop - 200)) {
-        current = section.getAttribute('id');
+      if (scrollY >= sectionTop - 200) {
+        current = section.getAttribute("id");
       }
     });
 
-    navLinks.forEach(link => {
-      link.classList.remove('active');
-      if (link.getAttribute('href') === `#${current}`) {
-        link.classList.add('active');
+    navLinks.forEach((link) => {
+      link.classList.remove("active");
+      if (link.getAttribute("href") === `#${current}`) {
+        link.classList.add("active");
       }
     });
   }
@@ -623,7 +634,7 @@ document.addEventListener("DOMContentLoaded", function () {
         title: "Content Gorilla",
         description:
           "A high-converting business funnel page built with React and Tailwind CSS. Features modern UI/UX design, responsive layout, and optimized conversion elements. Delivered exceptional results for client's business growth with clean, efficient code architecture.",
-        image: "img/cg-salespage.png",
+        image: "img/content-gorilla.png",
         tech: [
           "React",
           "Tailwind CSS",
@@ -731,8 +742,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
     anchorLinks.forEach((link) => {
       link.addEventListener("click", (e) => {
+        const href = link.getAttribute("href");
+
+        // Skip modal links and external links
+        if (
+          !href ||
+          href === "#" ||
+          !href.startsWith("#") ||
+          link.classList.contains("modal-link")
+        ) {
+          return; // Let the browser handle external links normally
+        }
+
         e.preventDefault();
-        const target = document.querySelector(link.getAttribute("href"));
+        const target = document.querySelector(href);
 
         if (target) {
           const offsetTop = target.offsetTop - 100; // Account for fixed navbar
@@ -831,287 +854,290 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // ===== NAVIGATION FUNCTIONALITY =====
   function initNavigation() {
-    const navbar = document.getElementById('navbar');
-    const hamburger = document.getElementById('hamburger');
-    const sidebar = document.getElementById('sidebar');
-    const sidebarOverlay = document.getElementById('sidebar-overlay');
-    const sidebarClose = document.getElementById('sidebar-close');
-    const navLinks = document.querySelectorAll('.nav-link');
+    const navbar = document.getElementById("navbar");
+    const hamburger = document.getElementById("hamburger");
+    const sidebar = document.getElementById("sidebar");
+    const sidebarOverlay = document.getElementById("sidebar-overlay");
+    const sidebarClose = document.getElementById("sidebar-close");
+    const navLinks = document.querySelectorAll(".nav-link");
     const scrollToTop = document.getElementById("scrollToTop");
     const scrollNavPopup = document.getElementById("scrollNavPopup");
-    
+
     let lastScrollY = window.scrollY;
     let isScrolling = false;
 
     // Check if we're in mobile mode and update navbar accordingly
     function updateNavbarMode() {
-        if (window.innerWidth <= 991) {
-            navbar.classList.add('mobile-mode');
-        } else {
-            navbar.classList.remove('mobile-mode');
-        }
+      if (window.innerWidth <= 991) {
+        navbar.classList.add("mobile-mode");
+      } else {
+        navbar.classList.remove("mobile-mode");
+      }
     }
 
     // Initial check
     updateNavbarMode();
 
     // Hamburger click handler
-    hamburger.addEventListener('click', () => {
-        openSidebar();
+    hamburger.addEventListener("click", () => {
+      openSidebar();
     });
 
     // Sidebar close button handler
-    sidebarClose.addEventListener('click', () => {
-        closeSidebar();
+    sidebarClose.addEventListener("click", () => {
+      closeSidebar();
     });
 
     // Overlay click handler
-    sidebarOverlay.addEventListener('click', () => {
-        closeSidebar();
+    sidebarOverlay.addEventListener("click", () => {
+      closeSidebar();
     });
 
     // Navigation link handlers for sidebar
-    const sidebarLinks = sidebar.querySelectorAll('.nav-link');
-    sidebarLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const targetId = link.getAttribute('href');
-            const targetSection = document.querySelector(targetId);
-            
-            if (targetSection) {
-                closeSidebar();
-                setTimeout(() => {
-                    targetSection.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }, 300);
-            }
-        });
+    const sidebarLinks = sidebar.querySelectorAll(".nav-link");
+    sidebarLinks.forEach((link) => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        const targetId = link.getAttribute("href");
+        const targetSection = document.querySelector(targetId);
+
+        if (targetSection) {
+          closeSidebar();
+          setTimeout(() => {
+            targetSection.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          }, 300);
+        }
+      });
     });
 
     // Regular navigation link handlers
-    const regularNavLinks = document.querySelectorAll('.nav-menu .nav-link');
-    regularNavLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const targetId = link.getAttribute('href');
-            const targetSection = document.querySelector(targetId);
-            
-            if (targetSection) {
-                targetSection.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
+    const regularNavLinks = document.querySelectorAll(".nav-menu .nav-link");
+    regularNavLinks.forEach((link) => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        const targetId = link.getAttribute("href");
+        const targetSection = document.querySelector(targetId);
+
+        if (targetSection) {
+          targetSection.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }
+      });
     });
 
     // Scroll to top functionality with proper single/double click detection
     if (scrollToTop) {
-        let clickCount = 0;
-        let clickTimer = null;
-        const clickDelay = 300; // 300ms to detect double click
-        
-        function handleScrollToTopClick(e) {
-            e.preventDefault();
-            clickCount++;
-            
-            if (clickCount === 1) {
-                clickTimer = setTimeout(() => {
-                    // Single click - scroll to top
-                    window.scrollTo({
-                        top: 0,
-                        behavior: "smooth"
-                    });
-                    clickCount = 0;
-                }, clickDelay);
-            } else if (clickCount === 2) {
-                // Double click - show navigation popup
-                clearTimeout(clickTimer);
-                scrollNavPopup.classList.toggle("active");
-                
-                // Hide popup after 3 seconds
-                setTimeout(() => {
-                    scrollNavPopup.classList.remove("active");
-                }, 3000);
-                
-                clickCount = 0;
-            }
+      let clickCount = 0;
+      let clickTimer = null;
+      const clickDelay = 300; // 300ms to detect double click
+
+      function handleScrollToTopClick(e) {
+        e.preventDefault();
+        clickCount++;
+
+        if (clickCount === 1) {
+          clickTimer = setTimeout(() => {
+            // Single click - scroll to top
+            window.scrollTo({
+              top: 0,
+              behavior: "smooth",
+            });
+            clickCount = 0;
+          }, clickDelay);
+        } else if (clickCount === 2) {
+          // Double click - show navigation popup
+          clearTimeout(clickTimer);
+          scrollNavPopup.classList.toggle("active");
+
+          // Hide popup after 3 seconds
+          setTimeout(() => {
+            scrollNavPopup.classList.remove("active");
+          }, 3000);
+
+          clickCount = 0;
         }
-        
-        // Handle both mouse clicks and touch events
-        scrollToTop.addEventListener("click", handleScrollToTopClick);
-        
-        // Touch events for mobile devices
-        let touchStartTime = 0;
-        let touchCount = 0;
-        let touchTimer = null;
-        
-        scrollToTop.addEventListener("touchstart", (e) => {
-            e.preventDefault();
-            touchStartTime = Date.now();
-        });
-        
-        scrollToTop.addEventListener("touchend", (e) => {
-            e.preventDefault();
-            const touchDuration = Date.now() - touchStartTime;
-            
-            // Only process quick taps (not long presses)
-            if (touchDuration < 200) {
-                touchCount++;
-                
-                if (touchCount === 1) {
-                    touchTimer = setTimeout(() => {
-                        // Single tap - scroll to top
-                        window.scrollTo({
-                            top: 0,
-                            behavior: "smooth"
-                        });
-                        touchCount = 0;
-                    }, clickDelay);
-                } else if (touchCount === 2) {
-                    // Double tap - show navigation popup
-                    clearTimeout(touchTimer);
-                    scrollNavPopup.classList.toggle("active");
-                    
-                    // Hide popup after 3 seconds
-                    setTimeout(() => {
-                        scrollNavPopup.classList.remove("active");
-                    }, 3000);
-                    
-                    touchCount = 0;
-                }
-            }
-        });
+      }
+
+      // Handle both mouse clicks and touch events
+      scrollToTop.addEventListener("click", handleScrollToTopClick);
+
+      // Touch events for mobile devices
+      let touchStartTime = 0;
+      let touchCount = 0;
+      let touchTimer = null;
+
+      scrollToTop.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        touchStartTime = Date.now();
+      });
+
+      scrollToTop.addEventListener("touchend", (e) => {
+        e.preventDefault();
+        const touchDuration = Date.now() - touchStartTime;
+
+        // Only process quick taps (not long presses)
+        if (touchDuration < 200) {
+          touchCount++;
+
+          if (touchCount === 1) {
+            touchTimer = setTimeout(() => {
+              // Single tap - scroll to top
+              window.scrollTo({
+                top: 0,
+                behavior: "smooth",
+              });
+              touchCount = 0;
+            }, clickDelay);
+          } else if (touchCount === 2) {
+            // Double tap - show navigation popup
+            clearTimeout(touchTimer);
+            scrollNavPopup.classList.toggle("active");
+
+            // Hide popup after 3 seconds
+            setTimeout(() => {
+              scrollNavPopup.classList.remove("active");
+            }, 3000);
+
+            touchCount = 0;
+          }
+        }
+      });
     }
 
     // Close popup when clicking outside
     if (scrollNavPopup) {
-        document.addEventListener("click", (e) => {
-            if (!scrollToTop.contains(e.target) && !scrollNavPopup.contains(e.target)) {
-                scrollNavPopup.classList.remove("active");
-            }
-        });
+      document.addEventListener("click", (e) => {
+        if (
+          !scrollToTop.contains(e.target) &&
+          !scrollNavPopup.contains(e.target)
+        ) {
+          scrollNavPopup.classList.remove("active");
+        }
+      });
 
-        // Close popup navigation when clicking on links
-        const popupLinks = scrollNavPopup.querySelectorAll(".nav-link");
-        popupLinks.forEach((link) => {
-            link.addEventListener("click", () => {
-                scrollNavPopup.classList.remove("active");
-            });
+      // Close popup navigation when clicking on links
+      const popupLinks = scrollNavPopup.querySelectorAll(".nav-link");
+      popupLinks.forEach((link) => {
+        link.addEventListener("click", () => {
+          scrollNavPopup.classList.remove("active");
         });
+      });
     }
 
     function openSidebar() {
-        hamburger.classList.add('active');
-        sidebar.classList.add('active');
-        sidebarOverlay.classList.add('active');
-        document.body.style.overflow = 'hidden';
+      hamburger.classList.add("active");
+      sidebar.classList.add("active");
+      sidebarOverlay.classList.add("active");
+      document.body.style.overflow = "hidden";
     }
 
     function closeSidebar() {
-        hamburger.classList.remove('active');
-        sidebar.classList.remove('active');
-        sidebarOverlay.classList.remove('active');
-        document.body.style.overflow = '';
+      hamburger.classList.remove("active");
+      sidebar.classList.remove("active");
+      sidebarOverlay.classList.remove("active");
+      document.body.style.overflow = "";
     }
 
     // Scroll handler for navbar hide/show and scroll-to-top widget
     function handleScroll() {
-        if (isScrolling) return;
-        
-        isScrolling = true;
-        requestAnimationFrame(() => {
-            const currentScrollY = window.scrollY;
-            
-            // Only handle navbar scroll effects on larger screens
-            if (window.innerWidth > 991) {
-                // Add scrolled class for styling
-                if (currentScrollY > 50) {
-                    navbar.classList.add('scrolled');
-                } else {
-                    navbar.classList.remove('scrolled');
-                }
+      if (isScrolling) return;
 
-                // Hide/show navbar based on scroll direction
-                if (currentScrollY > lastScrollY && currentScrollY > 100) {
-                    navbar.classList.add('hidden');
-                } else {
-                    navbar.classList.remove('hidden');
-                }
-            }
+      isScrolling = true;
+      requestAnimationFrame(() => {
+        const currentScrollY = window.scrollY;
 
-            // Show/hide scroll to top button
-            if (scrollToTop) {
-                if (currentScrollY > 300) {
-                    scrollToTop.classList.add("visible");
-                } else {
-                    scrollToTop.classList.remove("visible");
-                }
-            }
+        // Only handle navbar scroll effects on larger screens
+        if (window.innerWidth > 991) {
+          // Add scrolled class for styling
+          if (currentScrollY > 50) {
+            navbar.classList.add("scrolled");
+          } else {
+            navbar.classList.remove("scrolled");
+          }
 
-            lastScrollY = currentScrollY;
-            isScrolling = false;
-        });
+          // Hide/show navbar based on scroll direction
+          if (currentScrollY > lastScrollY && currentScrollY > 100) {
+            navbar.classList.add("hidden");
+          } else {
+            navbar.classList.remove("hidden");
+          }
+        }
+
+        // Show/hide scroll to top button
+        if (scrollToTop) {
+          if (currentScrollY > 300) {
+            scrollToTop.classList.add("visible");
+          } else {
+            scrollToTop.classList.remove("visible");
+          }
+        }
+
+        lastScrollY = currentScrollY;
+        isScrolling = false;
+      });
     }
 
     // Scroll event listener
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
     // Handle window resize
-    window.addEventListener('resize', () => {
-        updateNavbarMode();
-        if (window.innerWidth > 991) {
-            closeSidebar();
-        }
+    window.addEventListener("resize", () => {
+      updateNavbarMode();
+      if (window.innerWidth > 991) {
+        closeSidebar();
+      }
     });
 
     // Close sidebar on escape key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && sidebar.classList.contains('active')) {
-            closeSidebar();
-        }
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && sidebar.classList.contains("active")) {
+        closeSidebar();
+      }
     });
   }
 
   // ===== SHOOTING STARS FUNCTIONALITY =====
   function initShootingStars() {
-    const galaxyBg = document.querySelector('.galaxy-bg');
+    const galaxyBg = document.querySelector(".galaxy-bg");
     if (!galaxyBg) return;
-    
+
     let shootingStarTimer;
-    
+
     // Different shooting star types and directions
-    const starTypes = ['type-1', 'type-2', 'type-3'];
+    const starTypes = ["type-1", "type-2", "type-3"];
     const directions = [
-      'shoot-from-top-left',
-      'shoot-from-top-right', 
-      'shoot-from-left',
-      'shoot-from-right',
-      'shoot-from-bottom-left',
-      'shoot-from-bottom-right'
+      "shoot-from-top-left",
+      "shoot-from-top-right",
+      "shoot-from-left",
+      "shoot-from-right",
+      "shoot-from-bottom-left",
+      "shoot-from-bottom-right",
     ];
-    
+
     function createShootingStar(type, direction) {
-      const star = document.createElement('div');
+      const star = document.createElement("div");
       star.className = `shooting-star ${type} ${direction}`;
-      
+
       // Position the star at the starting edge based on direction
       const startPositions = {
-        'shoot-from-top-left': { top: '0%', left: '0%' },
-        'shoot-from-top-right': { top: '0%', right: '0%' },
-        'shoot-from-left': { top: '50%', left: '0%' },
-        'shoot-from-right': { top: '50%', right: '0%' },
-        'shoot-from-bottom-left': { bottom: '0%', left: '0%' },
-        'shoot-from-bottom-right': { bottom: '0%', right: '0%' }
+        "shoot-from-top-left": { top: "0%", left: "0%" },
+        "shoot-from-top-right": { top: "0%", right: "0%" },
+        "shoot-from-left": { top: "50%", left: "0%" },
+        "shoot-from-right": { top: "50%", right: "0%" },
+        "shoot-from-bottom-left": { bottom: "0%", left: "0%" },
+        "shoot-from-bottom-right": { bottom: "0%", right: "0%" },
       };
-      
+
       const position = startPositions[direction];
       Object.assign(star.style, position);
-      
+
       // Add random offset to make it more natural
-      if (direction.includes('top') || direction.includes('bottom')) {
+      if (direction.includes("top") || direction.includes("bottom")) {
         const randomOffset = Math.random() * 30 - 15; // -15 to +15
         if (position.top) star.style.top = `${randomOffset}%`;
         if (position.bottom) star.style.bottom = `${randomOffset}%`;
@@ -1119,9 +1145,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const randomOffset = Math.random() * 30 - 15;
         star.style.top = `${50 + randomOffset}%`;
       }
-      
+
       galaxyBg.appendChild(star);
-      
+
       // Remove the star after animation completes
       setTimeout(() => {
         if (star.parentNode) {
@@ -1129,101 +1155,106 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }, 3500);
     }
-    
+
     function createShootingStarGroup() {
       // Create 1-3 shooting stars at random intervals
       const numStars = Math.floor(Math.random() * 3) + 1;
-      
+
       for (let i = 0; i < numStars; i++) {
         setTimeout(() => {
-          const randomType = starTypes[Math.floor(Math.random() * starTypes.length)];
-          const randomDirection = directions[Math.floor(Math.random() * directions.length)];
+          const randomType =
+            starTypes[Math.floor(Math.random() * starTypes.length)];
+          const randomDirection =
+            directions[Math.floor(Math.random() * directions.length)];
           createShootingStar(randomType, randomDirection);
         }, i * (Math.random() * 1000 + 500)); // Stagger the stars by 0.5-1.5 seconds
       }
     }
-    
+
     function startShootingStars() {
       function scheduleNext() {
         // Random interval between 10-15 seconds
         const interval = Math.random() * 5000 + 10000; // 10000-15000ms
-        
+
         shootingStarTimer = setTimeout(() => {
           createShootingStarGroup();
           scheduleNext(); // Schedule the next group
         }, interval);
       }
-      
+
       // Start the first group after a short delay
       setTimeout(() => {
         createShootingStarGroup();
         scheduleNext();
       }, 3000);
     }
-    
+
     function stopShootingStars() {
       if (shootingStarTimer) {
         clearTimeout(shootingStarTimer);
         shootingStarTimer = null;
       }
     }
-    
+
     // Start shooting stars
     startShootingStars();
-    
+
     // Handle visibility change to pause/resume shooting stars
-    document.addEventListener('visibilitychange', () => {
+    document.addEventListener("visibilitychange", () => {
       if (document.hidden) {
         stopShootingStars();
       } else {
         startShootingStars();
       }
     });
-    
+
     // Return control functions for potential external use
     return {
       start: startShootingStars,
-      stop: stopShootingStars
+      stop: stopShootingStars,
     };
   }
 
   // ===== HERO IMAGE MODAL =====
   function initHeroImageModal() {
-    const heroImage = document.querySelector('.hero-image .image-container');
-    const heroImageModal = document.getElementById('heroImageModal');
-    const heroModalClose = document.getElementById('heroModalClose');
-    const modalOverlay = heroImageModal ? heroImageModal.querySelector('.modal-overlay') : null;
+    const heroImage = document.querySelector(".hero-image .image-container");
+    const heroImageModal = document.getElementById("heroImageModal");
+    const heroModalClose = document.getElementById("heroModalClose");
+    const modalOverlay = heroImageModal
+      ? heroImageModal.querySelector(".modal-overlay")
+      : null;
 
     if (!heroImage || !heroImageModal) return;
 
     function openHeroModal() {
-      heroImageModal.classList.add('active');
-      document.body.style.overflow = 'hidden';
+      heroImageModal.classList.add("active");
+      document.body.style.overflow = "hidden";
 
       // GSAP animation for modal content
-      if (typeof gsap !== 'undefined') {
-        gsap.from('.hero-modal-content', {
+      if (typeof gsap !== "undefined") {
+        gsap.from(".hero-modal-content", {
           duration: 0.4,
           scale: 0.8,
           opacity: 0,
-          ease: 'back.out(1.7)',
+          ease: "back.out(1.7)",
         });
       }
     }
 
     function closeHeroModal() {
-      heroImageModal.classList.remove('active');
-      document.body.style.overflow = 'auto';
+      heroImageModal.classList.remove("active");
+      document.body.style.overflow = "auto";
     }
 
     // Event listeners
-    heroImage.addEventListener('click', openHeroModal);
-    if (heroModalClose) heroModalClose.addEventListener('click', closeHeroModal);
-    if (modalOverlay) modalOverlay.addEventListener('click', closeHeroModal);
+    heroImage.addEventListener("click", openHeroModal);
+    if (heroModalClose)
+      heroModalClose.addEventListener("click", closeHeroModal);
+    if (modalOverlay) modalOverlay.addEventListener("click", closeHeroModal);
 
     // Close modal with Escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && heroImageModal.classList.contains('active')) {
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && heroImageModal.classList.contains("active")) {
         closeHeroModal();
       }
     });
