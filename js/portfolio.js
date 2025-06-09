@@ -620,19 +620,19 @@ document.addEventListener("DOMContentLoaded", function () {
     // Project data
     const projectData = {
       1: {
-        title: "E-Commerce Platform",
+        title: "Content Gorilla",
         description:
-          "A full-stack e-commerce solution built with React and Node.js. Features include user authentication, product catalog, shopping cart, payment integration, and admin dashboard. The application uses MongoDB for data storage and implements real-time notifications.",
-        image: "img/3.jpg",
+          "A high-converting business funnel page built with React and Tailwind CSS. Features modern UI/UX design, responsive layout, and optimized conversion elements. Delivered exceptional results for client's business growth with clean, efficient code architecture.",
+        image: "img/cg-salespage.png",
         tech: [
           "React",
-          "Node.js",
-          "MongoDB",
-          "Express",
-          "Stripe API",
-          "Socket.io",
+          "Tailwind CSS",
+          "JavaScript",
+          "Responsive Design",
+          "UI/UX",
+          "Performance Optimization",
         ],
-        liveLink: "#",
+        liveLink: "https://content-gorilla-salespage.netlify.app/", // Replace with actual link
       },
       2: {
         title: "Portfolio Website",
@@ -640,7 +640,7 @@ document.addEventListener("DOMContentLoaded", function () {
           "A modern, responsive portfolio website showcasing creative work and projects. Built with Vue.js and enhanced with GSAP animations and Three.js for interactive 3D elements. Features smooth scrolling, parallax effects, and optimized performance.",
         image: "img/4.jpg",
         tech: ["Vue.js", "GSAP", "Three.js", "SCSS", "Webpack", "PWA"],
-        liveLink: "#",
+        liveLink: "#", // Add your portfolio link here
       },
       3: {
         title: "Mobile App Design",
@@ -648,7 +648,7 @@ document.addEventListener("DOMContentLoaded", function () {
           "A cross-platform mobile application for social networking and content sharing. Developed with React Native and integrated with Firebase for real-time data synchronization, user authentication, and cloud storage.",
         image: "img/5.jpg",
         tech: ["React Native", "Firebase", "Redux", "Expo", "AsyncStorage"],
-        liveLink: "#",
+        liveLink: "#", // Add your app link here
       },
       4: {
         title: "Dashboard Analytics",
@@ -663,7 +663,7 @@ document.addEventListener("DOMContentLoaded", function () {
           "Chart.js",
           "Material UI",
         ],
-        liveLink: "#",
+        liveLink: "#", // Add your dashboard link here
       },
     };
 
