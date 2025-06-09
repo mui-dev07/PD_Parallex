@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Test Page</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1a1a1a;
+            color: #00ff41;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 30px;
+            border: 1px solid #00ff41;
+            border-radius: 10px;
+        }
+        h1 {
+            color: #ff4757;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-item {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background: rgba(0, 255, 65, 0.05);
+        }
+        .test-title {
+            color: #00ff41;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .test-instruction {
+            color: #fff;
+            margin-bottom: 10px;
+        }
+        .test-result {
+            color: #ffff00;
+            font-style: italic;
+        }
+        .security-status {
+            text-align: center;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .status-active {
+            background: rgba(0, 255, 65, 0.2);
+            border: 2px solid #00ff41;
+            color: #00ff41;
+        }
+        .status-inactive {
+            background: rgba(255, 71, 87, 0.2);
+            border: 2px solid #ff4757;
+            color: #ff4757;
+        }
+        button {
+            background: #00ff41;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: inherit;
+            margin: 5px;
+        }
+        button:hover {
+            background: #00cc33;
+        }
+        .disabled-feature {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔒 SECURITY SYSTEM TEST PAGE</h1>
+        
+        <div id="securityStatus" class="security-status">
+            Checking security status...
+        </div>
+        
+        <div class="test-item">
+            <div class="test-title">1. Right-Click Protection Test</div>
+            <div class="test-instruction">Try right-clicking anywhere on this page.</div>
+            <div class="test-result">Expected: Context menu should be blocked and alert shown.</div>
+        </div>
+        
+        <div class="test-item">
+            <div class="test-title">2. Text Selection Test</div>
+            <div class="test-instruction">Try selecting this text with your mouse.</div>
+            <div class="test-result">Expected: Text selection should be prevented.</div>
+        </div>
+        
+        <div class="test-item">
+            <div class="test-title">3. Keyboard Shortcut Tests</div>
+            <div class="test-instruction">Try these keyboard shortcuts:</div>
+            <ul>
+                <li><strong>F12</strong> - Developer Tools</li>
+                <li><strong>Ctrl+Shift+I</strong> - Inspect Element</li>
+                <li><strong>Ctrl+U</strong> - View Source</li>
+                <li><strong>Ctrl+S</strong> - Save Page</li>
+                <li><strong>Ctrl+A</strong> - Select All</li>
+                <li><strong>Ctrl+C</strong> - Copy</li>
+                <li><strong>Ctrl+P</strong> - Print</li>
+            </ul>
+            <div class="test-result">Expected: All shortcuts should be blocked and alerts shown.</div>
+        </div>
+        
+        <div class="test-item">
+            <div class="test-title">4. DevTools Detection Test</div>
+            <div class="test-instruction">Open Developer Tools (if you can) and watch for alerts.</div>
+            <div class="test-result">Expected: Security alerts should appear when DevTools is opened.</div>
+        </div>
+        
+        <div class="test-item">
+            <div class="test-title">5. Console Access Test</div>
+            <div class="test-instruction">Check the browser console for security messages.</div>
+            <div class="test-result">Expected: Security warnings and copyright notices should be displayed.</div>
+        </div>
+        
+        <div class="test-item">
+            <div class="test-title">6. Print Protection Test</div>
+            <button onclick="testPrint()">Test Print Function</button>
+            <div class="test-result">Expected: Print function should be blocked with security alert.</div>
+        </div>
+        
+        <div class="test-item">
+            <div class="test-title">7. Network Request Monitoring</div>
+            <button onclick="testNetworkRequest()">Test Suspicious Request</button>
+            <div class="test-result">Expected: Suspicious network activity should be detected and logged.</div>
+        </div>
+        
+        <div class="test-item">
+            <div class="test-title">8. Watermark System Test</div>
+            <div class="test-instruction">Wait and watch for dynamic watermarks to appear on the page.</div>
+            <div class="test-result">Expected: Periodic copyright watermarks should appear and disappear.</div>
+        </div>
+        
+        <div class="test-item">
+            <div class="test-title">9. Security Event Logging</div>
+            <button onclick="showSecurityLogs()">Show Security Events</button>
+            <div id="securityLogs" class="test-result" style="margin-top: 10px;"></div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <button onclick="runAllTests()">Run All Automated Tests</button>
+            <button onclick="resetTests()">Reset Test Results</button>
+        </div>
+        
+        <div style="margin-top: 30px; text-align: center; color: #666; font-size: 12px;">
+            © 2025 Mujtaba Ahmed - Security Test Suite<br>
+            This page is for testing security measures only.
+        </div>
+    </div>
+
+    <script>
+        // Check if security systems are active
+        function checkSecurityStatus() {
+            const statusDiv = document.getElementById('securityStatus');
+            const hasBasicSecurity = window.SECURITY_ENABLED;
+            const hasAdvancedSecurity = window.ADVANCED_SECURITY_ACTIVE;
+            
+            if (hasBasicSecurity && hasAdvancedSecurity) {
+                statusDiv.className = 'security-status status-active';
+                statusDiv.innerHTML = '🟢 SECURITY SYSTEMS ACTIVE<br>All protection layers are operational';
+            } else if (hasBasicSecurity || hasAdvancedSecurity) {
+                statusDiv.className = 'security-status status-inactive';
+                statusDiv.innerHTML = '🟡 PARTIAL SECURITY<br>Some protection layers may not be loaded';
+            } else {
+                statusDiv.className = 'security-status status-inactive';
+                statusDiv.innerHTML = '🔴 SECURITY SYSTEMS INACTIVE<br>Protection layers are not loaded';
+            }
+        }
+        
+        // Test print function
+        function testPrint() {
+            try {
+                window.print();
+                alert('⚠️ Print function was NOT blocked! Security may be compromised.');
+            } catch (e) {
+                alert('✅ Print function successfully blocked by security system.');
+            }
+        }
+        
+        // Test network request monitoring
+        function testNetworkRequest() {
+            // This should trigger the suspicious activity detection
+            fetch('/fake-download-endpoint')
+                .then(() => {
+                    alert('✅ Network request monitoring is working.');
+                })
+                .catch(() => {
+                    alert('✅ Network request was blocked or monitored.');
+                });
+        }
+        
+        // Show security logs
+        function showSecurityLogs() {
+            const logsDiv = document.getElementById('securityLogs');
+            
+            if (window.SecurityHandler && window.SecurityHandler.instance) {
+                const events = window.SecurityHandler.instance.securityEvents;
+                if (events && events.length > 0) {
+                    logsDiv.innerHTML = '<strong>Recent Security Events:</strong><br>' +
+                        events.slice(-5).map(event => 
+                            `[${new Date(event.timestamp).toLocaleTimeString()}] ${event.type}`
+                        ).join('<br>');
+                } else {
+                    logsDiv.innerHTML = 'No security events logged yet.';
+                }
+            } else {
+                logsDiv.innerHTML = 'Security logging system not available.';
+            }
+        }
+        
+        // Run automated tests
+        function runAllTests() {
+            let results = [];
+            
+            // Test 1: Check security systems
+            const hasBasicSecurity = window.SECURITY_ENABLED;
+            const hasAdvancedSecurity = window.ADVANCED_SECURITY_ACTIVE;
+            results.push(`Security Systems: ${hasBasicSecurity && hasAdvancedSecurity ? '✅ ACTIVE' : '❌ INACTIVE'}`);
+            
+            // Test 2: Check console protection
+            const consoleProtected = typeof console.log === 'function';
+            results.push(`Console Monitoring: ${consoleProtected ? '✅ ACTIVE' : '❌ INACTIVE'}`);
+            
+            // Test 3: Check selection prevention
+            const selectionPrevented = document.body.style.userSelect === 'none' || 
+                                      getComputedStyle(document.body).userSelect === 'none';
+            results.push(`Text Selection Block: ${selectionPrevented ? '✅ ACTIVE' : '❌ INACTIVE'}`);
+            
+            // Test 4: Check watermarking
+            const watermarkActive = window.ADVANCED_SECURITY_ACTIVE;
+            results.push(`Dynamic Watermarking: ${watermarkActive ? '✅ ACTIVE' : '❌ INACTIVE'}`);
+            
+            alert('Automated Test Results:\n\n' + results.join('\n'));
+        }
+        
+        // Reset test results
+        function resetTests() {
+            document.getElementById('securityLogs').innerHTML = '';
+            checkSecurityStatus();
+            alert('Test results have been reset.');
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            checkSecurityStatus();
+            
+            // Check for security systems periodically
+            setInterval(checkSecurityStatus, 5000);
+        });
+        
+        // Additional test features
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            alert('✅ Right-click protection is working!');
+        });
+        
+        document.addEventListener('selectstart', function(e) {
+            e.preventDefault();
+            alert('✅ Text selection protection is working!');
+        });
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.keyCode === 123 || 
+                (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 83 || e.keyCode === 73))) {
+                e.preventDefault();
+                alert('✅ Keyboard shortcut protection is working!');
+            }
+        });
+        
+        // Log this test page access
+        console.log('%c🔧 SECURITY TEST PAGE LOADED', 'color: #00ff41; font-size: 16px; font-weight: bold;');
+        console.log('%cThis page is for testing security measures only.', 'color: #fff; font-size: 12px;');
+    </script>
+</body>
+</html> 

@@ -6,6 +6,281 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>Portfolio </title>
     <link rel="icon" href="img/star.svg" type="icon/x-icon" />
+    
+    <!-- Security Headers and Meta Tags (Applied conditionally) -->
+    <script>
+      // Only apply security headers in production mode
+      // X-Frame-Options will be handled by server-side .htaccess in production
+      const isProduction = !(['localhost', '127.0.0.1', ''].includes(window.location.hostname) || 
+                            window.location.protocol === 'file:');
+      
+      if (isProduction) {
+        // Add security meta tags for production
+        const securityMetas = [
+          { 'http-equiv': 'X-Content-Type-Options', content: 'nosniff' },
+          { 'http-equiv': 'X-XSS-Protection', content: '1; mode=block' },
+          { 'http-equiv': 'Strict-Transport-Security', content: 'max-age=31536000; includeSubDomains' },
+          { name: 'referrer', content: 'no-referrer' },
+          { name: 'robots', content: 'noindex, nofollow, noarchive, nosnippet, noimageindex' }
+        ];
+        
+        securityMetas.forEach(meta => {
+          const metaTag = document.createElement('meta');
+          Object.keys(meta).forEach(key => {
+            metaTag.setAttribute(key, meta[key]);
+          });
+          document.head.appendChild(metaTag);
+        });
+      } else {
+        console.log('🔧 Development Mode: Security headers skipped');
+      }
+    </script>
+    
+    <!-- Security and Anti-Debugging Script -->
+    <script>
+      // ===== COMPREHENSIVE SECURITY SYSTEM =====
+      (function() {
+        'use strict';
+        
+        // Use centralized security configuration
+        // Configuration is now loaded from js/security-config.js
+
+        // Obfuscated security functions
+        const _0x4a2b=['console','warn','DevTools detected! Access restricted.','error','clear','Application protected by advanced security.','keydown','ctrlKey','preventDefault','F12','shiftKey','altKey','metaKey','contextmenu','selectstart','dragstart','copy','cut','paste','print','beforeprint','afterprint','blur','focus','resize','orientationchange','visibilitychange','hidden','pagehide','beforeunload','unload'];
+        
+        // Anti-debugging techniques
+        let devToolsOpen = false;
+        let debuggerDetected = false;
+        let lastTime = performance.now();
+        
+        // DevTools Detection Method 1: Console monitoring
+        const devToolsChecker = () => {
+          const start = performance.now();
+          debugger;
+          const end = performance.now();
+          
+          if (end - start > 100) {
+            devToolsOpen = true;
+            handleSecurityViolation('devtools');
+          }
+        };
+        
+        // DevTools Detection Method 2: Console object monitoring
+        let consoleImage = new Image();
+        Object.defineProperty(consoleImage, 'id', {
+          get: function() {
+            devToolsOpen = true;
+            handleSecurityViolation('console');
+          }
+        });
+        
+        // DevTools Detection Method 3: Window size monitoring
+        const checkWindowSize = () => {
+          const threshold = 160;
+          if (window.outerHeight - window.innerHeight > threshold || 
+              window.outerWidth - window.innerWidth > threshold) {
+            devToolsOpen = true;
+            handleSecurityViolation('window_size');
+          }
+        };
+        
+        // Performance-based detection
+        const performanceCheck = () => {
+          const now = performance.now();
+          if (now - lastTime > 200) {
+            debuggerDetected = true;
+            handleSecurityViolation('performance');
+          }
+          lastTime = now;
+        };
+        
+        // Handle security violations
+        const handleSecurityViolation = (type) => {
+          if (window.SECURITY_CONFIG && window.SECURITY_CONFIG.showWarnings) {
+            console.clear();
+            console.warn(_0x4a2b[2]);
+            console.error(_0x4a2b[5]);
+          }
+          
+          // Log silently without visual overlay
+          console.log(`Security violation detected: ${type} at ${new Date().toISOString()}`);
+          
+          if (window.SECURITY_CONFIG && window.SECURITY_CONFIG.redirectOnDetection) {
+            setTimeout(() => window.location.href = 'about:blank', 2000);
+          }
+        };
+        
+        // Create warning overlay
+        const createWarningOverlay = (violationType) => {
+          const existing = document.getElementById('security-warning');
+          if (existing) return;
+          
+          const overlay = document.createElement('div');
+          overlay.id = 'security-warning';
+          overlay.innerHTML = `
+            <div style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+                        background: rgba(0,0,0,0.95); z-index: 999999; display: flex; 
+                        align-items: center; justify-content: center; color: #ff6b6b; 
+                        font-family: 'Courier New', monospace; font-size: 20px; text-align: center;">
+              <div>
+                <h2>⚠️ SECURITY ALERT ⚠️</h2>
+                <p>Unauthorized access attempt detected!</p>
+                <p>Type: ${violationType.toUpperCase()}</p>
+                <p>This incident has been logged.</p>
+                <p style="margin-top: 30px; font-size: 14px; opacity: 0.8;">
+                  ${SECURITY_CONFIG.watermarkText}
+                </p>
+              </div>
+            </div>
+          `;
+          document.body.appendChild(overlay);
+          
+          // Auto-remove after 3 seconds
+          setTimeout(() => {
+            if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+          }, 3000);
+        };
+        
+        // Disable keyboard shortcuts
+        const blockKeyboardShortcuts = (e) => {
+          // F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, Ctrl+Shift+C, etc.
+          if (e.keyCode === 123 || // F12
+              (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || // Ctrl+Shift+I/J
+              (e.ctrlKey && e.keyCode === 85) || // Ctrl+U
+              (e.ctrlKey && e.shiftKey && e.keyCode === 67) || // Ctrl+Shift+C
+              (e.ctrlKey && e.keyCode === 83) || // Ctrl+S
+              (e.ctrlKey && e.keyCode === 65) || // Ctrl+A
+              (e.ctrlKey && e.keyCode === 67) || // Ctrl+C
+              (e.ctrlKey && e.keyCode === 86) || // Ctrl+V
+              (e.ctrlKey && e.keyCode === 88) || // Ctrl+X
+              (e.ctrlKey && e.keyCode === 80) || // Ctrl+P
+              (e.keyCode === 116)) { // F5
+            e.preventDefault();
+            e.stopPropagation();
+            handleSecurityViolation('keyboard_shortcut');
+            return false;
+          }
+        };
+        
+        // Disable right-click context menu
+        const blockRightClick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          handleSecurityViolation('right_click');
+          return false;
+        };
+        
+        // Disable text selection
+        const blockSelection = (e) => {
+          e.preventDefault();
+          return false;
+        };
+        
+        // Advanced anti-debugging
+        const antiDebug = () => {
+          setInterval(() => {
+            debugger;
+            performanceCheck();
+          }, 100);
+          
+          setInterval(() => {
+            console.log(consoleImage);
+            console.clear();
+          }, 1000);
+          
+          setInterval(checkWindowSize, 500);
+          setInterval(devToolsChecker, 1000);
+        };
+        
+        // Infinite loop for debugger detection
+        const createDebuggerLoop = () => {
+          setInterval(() => {
+            (function() {
+              return false;
+            })['constructor']('debugger')['call']();
+          }, 50);
+        };
+        
+        // Initialize security measures
+        const initSecurity = () => {
+          // Check if security is enabled
+          if (!window.SECURITY_CONFIG || !window.SECURITY_CONFIG.enableSecurity) {
+            console.log('🔓 Security disabled - skipping initialization');
+            window.SECURITY_ENABLED = false;
+            return;
+          }
+          
+          // Apply event listeners
+          if (window.SECURITY_CONFIG.blockKeyboardShortcuts) {
+            document.addEventListener('keydown', blockKeyboardShortcuts, true);
+          }
+          
+          if (window.SECURITY_CONFIG.blockRightClick) {
+            document.addEventListener('contextmenu', blockRightClick, true);
+          }
+          
+          if (window.SECURITY_CONFIG.blockSelection) {
+            document.addEventListener('selectstart', blockSelection, true);
+            document.addEventListener('dragstart', blockSelection, true);
+          }
+          
+          // Block printing
+          window.addEventListener('beforeprint', (e) => {
+            e.preventDefault();
+            handleSecurityViolation('print_attempt');
+          });
+          
+          // Monitor page visibility
+          document.addEventListener('visibilitychange', () => {
+            if (document.hidden) return;
+            checkWindowSize();
+          });
+          
+          // Start anti-debugging if enabled
+          if (window.SECURITY_CONFIG.enableAntiDebug) {
+            antiDebug();
+            createDebuggerLoop();
+          }
+          
+          // Add CSS to disable selection
+          const style = document.createElement('style');
+          style.textContent = `
+            * {
+              -webkit-user-select: none !important;
+              -moz-user-select: none !important;
+              -ms-user-select: none !important;
+              user-select: none !important;
+              -webkit-touch-callout: none !important;
+              -webkit-tap-highlight-color: transparent !important;
+            }
+            body {
+              -webkit-app-region: no-drag;
+            }
+          `;
+          document.head.appendChild(style);
+          
+          // Console warning
+          console.clear();
+          console.log('%c⚠️ WARNING ⚠️', 'color: red; font-size: 30px; font-weight: bold;');
+          console.log('%cThis is a protected application. Unauthorized access is prohibited.', 'color: red; font-size: 16px;');
+          console.log('%c' + window.SECURITY_CONFIG.watermarkText, 'color: #666; font-size: 12px;');
+        };
+        
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initSecurity);
+        } else {
+          initSecurity();
+        }
+        
+        // Set security status based on configuration
+        setTimeout(() => {
+          window.SECURITY_ENABLED = window.SECURITY_CONFIG ? window.SECURITY_CONFIG.enableSecurity : true;
+        }, 100);
+        
+      })();
+    </script>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -579,11 +854,34 @@
     </div>
 
     <!-- Scripts -->
+    <script src="js/security-config.js"></script>
+    <script src="js/security.js"></script>
     <script src="js/loader-config.js"></script>
     <script src="js/splitting.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="js/luxy.js"></script>
     <script src="js/portfolio.js"></script>
+    
+    <!-- Security Validation Script -->
+    <script>
+      // Final security check - only for production mode
+      setTimeout(() => {
+        // Check if we're in development mode
+        const isDevelopment = window.SECURITY_CONFIG && 
+                             window.SECURITY_CONFIG.enableSecurity === false;
+        
+        if (isDevelopment) {
+          console.log('🔧 Development Mode: Security validation skipped');
+          return;
+        }
+        
+        // Only validate in production mode
+        if (!window.SECURITY_ENABLED || !window.ADVANCED_SECURITY_ACTIVE) {
+          console.error('🚨 CRITICAL: Security systems compromised!');
+          document.documentElement.innerHTML = '<body style="display:flex;align-items:center;justify-content:center;height:100vh;background:#000;color:#ff4757;font-family:monospace;font-size:24px;text-align:center;"><div><h1>🔒 ACCESS DENIED</h1><p>Security violation detected</p><p style="font-size:12px;opacity:0.7;margin-top:20px;">© 2025 Mujtaba Ahmed - All Rights Reserved</p></div></body>';
+        }
+      }, 3000);
+    </script>
   </body>
 </html>

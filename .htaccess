@@ -1,0 +1,149 @@
+# ===== PORTFOLIO SECURITY CONFIGURATION =====
+# © 2025 Mujtaba Ahmed - All Rights Reserved
+
+# ===== SECURITY HEADERS =====
+<IfModule mod_headers.c>
+    # Prevent MIME type sniffing
+    Header always set X-Content-Type-Options "nosniff"
+    
+    # Prevent clickjacking
+    Header always set X-Frame-Options "DENY"
+    
+    # XSS Protection
+    Header always set X-XSS-Protection "1; mode=block"
+    
+    # Referrer Policy
+    Header always set Referrer-Policy "no-referrer"
+    
+    # Content Security Policy
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self';"
+    
+    # HSTS (Force HTTPS)
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    
+    # Remove server information
+    Header unset Server
+    Header unset X-Powered-By
+    
+    # Add copyright notice to responses
+    Header always set X-Copyright "© 2025 Mujtaba Ahmed - All Rights Reserved"
+    Header always set X-Protection "This content is protected by advanced security measures"
+</IfModule>
+
+# ===== DISABLE SERVER SIGNATURE =====
+ServerSignature Off
+
+# ===== PREVENT ACCESS TO SENSITIVE FILES =====
+<FilesMatch "\.(htaccess|htpasswd|ini|log|sh|inc|bak|backup|sql|git)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Protect source code files
+<FilesMatch "\.(php|phtml|pl|py|jsp|asp|sh|cgi)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# ===== HOTLINK PROTECTION =====
+RewriteEngine On
+RewriteCond %{HTTP_REFERER} !^$
+# Replace 'your-actual-domain.com' with your real domain name
+RewriteCond %{HTTP_REFERER} !^https?://(www\.)?your-actual-domain\.com [NC]
+RewriteCond %{REQUEST_URI} \.(jpe?g|png|gif|css|js)$ [NC]
+RewriteRule ^(.*)$ - [F,L]
+
+# ===== PREVENT DIRECTORY BROWSING =====
+Options -Indexes
+
+# ===== BLOCK SUSPICIOUS USER AGENTS =====
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Block common scrapers and bots
+    RewriteCond %{HTTP_USER_AGENT} (wget|curl|libwww-perl|python|nikto|scan|java|winhttp|clshttp|loader) [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} (;|<|>|'|"|\)|\(|%0A|%0D|%27|%3C|%3E|%00) [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} (base64_decode|GLOBALS|REQUEST|NULL|unserialize|\$\{) [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} (HTTrack|harvest|extract|grab|miner) [NC]
+    RewriteRule ^(.*)$ - [F,L]
+    
+    # Block requests with suspicious query strings
+    RewriteCond %{QUERY_STRING} (download|rip|extract|steal|copy|scrape) [NC]
+    RewriteRule ^(.*)$ - [F,L]
+</IfModule>
+
+# ===== RATE LIMITING =====
+<IfModule mod_evasive.c>
+    DOSHashTableSize    32768
+    DOSPageCount        3
+    DOSSiteCount        50
+    DOSPageInterval     1
+    DOSSiteInterval     1
+    DOSBlockingPeriod   600
+</IfModule>
+
+# ===== PREVENT COMMON ATTACKS =====
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Block SQL injection attempts
+    RewriteCond %{QUERY_STRING} (\<|%3C).*script.*(\>|%3E) [NC,OR]
+    RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]
+    RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2}) [OR]
+    RewriteCond %{QUERY_STRING} proc/self/environ [OR]
+    RewriteCond %{QUERY_STRING} mosConfig_[a-zA-Z_]{1,21}(=|\%3D) [OR]
+    RewriteCond %{QUERY_STRING} base64_(en|de)code\(.*\) [OR]
+    RewriteCond %{QUERY_STRING} (\<|%3C).*object.*(\>|%3E) [OR]
+    RewriteCond %{QUERY_STRING} (\<|%3C).*iframe.*(\>|%3E) [OR]
+    RewriteCond %{QUERY_STRING} union.*select.*\( [NC,OR]
+    RewriteCond %{QUERY_STRING} union.*all.*select.* [NC,OR]
+    RewriteCond %{QUERY_STRING} concat.*\( [NC]
+    RewriteRule ^(.*)$ - [F,L]
+</IfModule>
+
+# ===== FILE TYPE RESTRICTIONS =====
+<Files "*.css">
+    # Allow CSS but add protection header
+    Header always set X-Content-Type "text/css; protected"
+</Files>
+
+<Files "*.js">
+    # Allow JS but add protection header
+    Header always set X-Content-Type "application/javascript; protected"
+</Files>
+
+# ===== COMPRESSION AND CACHING =====
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+</IfModule>
+
+# ===== BROWSER CACHING =====
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/jpg "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/gif "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+</IfModule>
+
+# ===== CUSTOM ERROR PAGES =====
+ErrorDocument 403 /403.html
+ErrorDocument 404 /404.html
+ErrorDocument 500 /500.html
+
+# ===== IP BLOCKING SECTION =====
+# Add IP addresses here to block specific attackers
+# Order Allow,Deny
+# Deny from xxx.xxx.xxx.xxx
+# Allow from all 
